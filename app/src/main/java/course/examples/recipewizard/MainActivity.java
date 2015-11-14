@@ -16,6 +16,7 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         /*TEST1*/
+        /*some change*/
         ArrayList<Integer> test = new ArrayList<>();
     }
 
