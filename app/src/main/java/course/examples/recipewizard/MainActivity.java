@@ -30,7 +30,7 @@ public class MainActivity extends Activity {
 
                 // start activity: Find Recipes
                 Intent intent = new Intent(MainActivity.this, RecipesActivity.class);
-                startActivity(intent);
+                MainActivity.this.startActivity(intent);
 
 
 
@@ -46,7 +46,7 @@ public class MainActivity extends Activity {
 
                 // start activity: Add New Recipe
                 Intent intent = new Intent(MainActivity.this, AddRecipeActivity.class);
-                startActivity(intent);
+                MainActivity.this.startActivity(intent);
 
 
             }
@@ -61,11 +61,27 @@ public class MainActivity extends Activity {
 
                 // start activity: Add Ingredients
                 Intent intent = new Intent(MainActivity.this, FilterActivity.class);
-                startActivity(intent);
+                MainActivity.this.startActivityForResult(intent,0);
 
 
             }
         });
+
+
+
+    }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        // Check which request we're responding to
+        if (requestCode == 0) {
+            // Make sure the request was successful
+            if (resultCode == RESULT_OK) {
+                // The user picked a contact.
+                // The Intent's data Uri identifies which contact was selected.
+
+                // Do something with the contact here (bigger example below)
+            }
+        }
     }
 
     @Override

@@ -31,6 +31,7 @@ public class FilterActivity extends Activity {
                 Intent intent = new Intent();
                 // return selections based on database fields
                 //intent.putExtra("field","value");
+                setResult(RESULT_OK , intent);
                 finish();
 
             }
