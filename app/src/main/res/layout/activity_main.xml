@@ -12,8 +12,7 @@
         android:text="Add Ingredients"
         android:id="@+id/AddIngredients"
         android:layout_above="@+id/FindRecipes"
-        android:layout_centerHorizontal="true"
-        android:clickable="false" />
+        android:layout_centerHorizontal="true" />
 
     <Button
         android:layout_width="wrap_content"
