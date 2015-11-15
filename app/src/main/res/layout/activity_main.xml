@@ -10,8 +10,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Add Ingredients"
-        android:id="@+id/button"
-        android:layout_above="@+id/button3"
+        android:id="@+id/AddIngredients"
+        android:layout_above="@+id/FindRecipes"
         android:layout_centerHorizontal="true"
         android:clickable="false" />
 
@@ -19,7 +19,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Add New Recipe"
-        android:id="@+id/button2"
+        android:id="@+id/AddNewRecipe"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true" />
 
@@ -27,8 +27,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Find Recipes"
-        android:id="@+id/button3"
-        android:layout_above="@+id/button2"
+        android:id="@+id/FindRecipes"
+        android:layout_above="@+id/AddNewRecipe"
         android:layout_centerHorizontal="true" />
 
 
@@ -39,7 +39,7 @@
         android:src="@drawable/titlepic"
         android:id="@+id/imageView"
         android:layout_alignParentStart="true"
-        android:layout_above="@+id/button"
+        android:layout_above="@+id/AddIngredients"
         android:layout_alignParentEnd="true"
         android:layout_alignParentTop="true" />
 
