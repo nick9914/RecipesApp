@@ -21,10 +21,10 @@ public class FilterActivity extends Activity {
 
 
         // Get a reference to the Press Me Button
-        final Button button = (Button) findViewById(R.id.button);
+        final Button done = (Button) findViewById(R.id.done);
         // Set an OnClickListener on this Button
         // Called each time the user clicks the Button
-        button.setOnClickListener(new View.OnClickListener() {
+        done.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 

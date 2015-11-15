@@ -21,10 +21,10 @@ public class MainActivity extends Activity {
         ArrayList<Integer> test = new ArrayList<>();
 
         // Get a reference to the Press Me Button
-        final Button button = (Button) findViewById(R.id.button);
+        final Button findRecipes = (Button) findViewById(R.id.FindRecipes);
         // Set an OnClickListener on this Button
         // Called each time the user clicks the Button
-        button.setOnClickListener(new View.OnClickListener() {
+        findRecipes.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
@@ -37,10 +37,10 @@ public class MainActivity extends Activity {
             }
         });
         // Get a reference to the Press Me Button
-        final Button button2 = (Button) findViewById(R.id.button2);
+        final Button addNewRecipe = (Button) findViewById(R.id.AddNewRecipe);
         // Set an OnClickListener on this Button
         // Called each time the user clicks the Button
-        button.setOnClickListener(new View.OnClickListener() {
+        addNewRecipe.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
@@ -52,15 +52,15 @@ public class MainActivity extends Activity {
             }
         });
         // Get a reference to the Press Me Button
-        final Button button3 = (Button) findViewById(R.id.button3);
+        final Button addIngredients = (Button) findViewById(R.id.AddIngredients);
         // Set an OnClickListener on this Button
         // Called each time the user clicks the Button
-        button.setOnClickListener(new View.OnClickListener() {
+        addIngredients.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
                 // start activity: Add Ingredients
-                Intent intent = new Intent(MainActivity.this, IngredientsActivity.class);
+                Intent intent = new Intent(MainActivity.this, FilterActivity.class);
                 startActivity(intent);
 
 
