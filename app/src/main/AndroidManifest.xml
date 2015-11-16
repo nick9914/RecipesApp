@@ -9,7 +9,6 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
-
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name" >
@@ -29,11 +28,12 @@
             android:name=".IngredientsActivity"
             android:label="IngredientsActivity" />
         <activity
-            android:name=".RecipesActivity"
-            android:label="RecipesActivity" />
-        <activity
             android:name=".SingleRecipeActivity"
             android:label="SingleRecipeActivity" />
+        <activity
+            android:name=".RecipesActivity"
+            android:label="@string/title_activity_recipes" >
+        </activity>
     </application>
 
 </manifest>
