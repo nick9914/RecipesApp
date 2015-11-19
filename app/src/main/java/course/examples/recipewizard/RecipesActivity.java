@@ -1,5 +1,6 @@
 package course.examples.recipewizard;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -28,6 +29,9 @@ public class RecipesActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 /*TODO: react to selections in the list*/
+                Intent intent = new Intent(RecipesActivity.this,SingleRecipeActivity.class);
+                startActivity(intent);
+
             }
         });
     }
