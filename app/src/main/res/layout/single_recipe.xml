@@ -54,17 +54,25 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentStart="true">
+        android:layout_alignParentStart="true"
+        android:weightSum="3">
 
         <ImageButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/imageButton" />
+            android:layout_width="54dp"
+            android:layout_height="54dp"
+            android:id="@+id/fork_and_knife_button"
+            android:src="@drawable/fork_and_knife"
+            android:adjustViewBounds="true"
+            android:scaleType="fitCenter"
+            android:layout_weight="1" />
 
-        <ImageView
+        <ImageButton
             android:layout_width="54dp"
             android:layout_height="54dp"
             android:id="@+id/like_view"
-            android:src="@drawable/like" />
+            android:src="@drawable/like"
+            android:adjustViewBounds="true"
+            android:scaleType="fitCenter"
+            android:layout_weight="1" />
     </LinearLayout>
 </RelativeLayout>

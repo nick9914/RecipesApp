@@ -30,6 +30,8 @@ public class RecipesActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 /*TODO: react to selections in the list*/
                 Intent intent = new Intent(RecipesActivity.this,SingleRecipeActivity.class);
+                RecipeListObject recipe = (RecipeListObject) parent.getItemAtPosition(position);
+                recipe.packToIntent(intent);
                 startActivity(intent);
 
             }

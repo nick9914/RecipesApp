@@ -1,5 +1,6 @@
 package course.examples.recipewizard;
 
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 
 /**
@@ -38,6 +39,19 @@ public class RecipeListObject {
 
     public void setRecipeDescription(String recipeDescription) {
         this.recipeDescription = recipeDescription;
+    }
+
+    public Intent packToIntent(Intent i){
+
+        if (recipePicture!=null){
+            //TODO: pack recipe picture into intent
+
+        }
+
+        i.putExtra("recipeLable",recipeLabel);
+        i.putExtra("recipeDescription",recipeDescription);
+        return i;
+
     }
 
 }
