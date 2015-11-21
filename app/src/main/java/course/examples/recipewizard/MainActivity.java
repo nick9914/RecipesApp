@@ -61,7 +61,7 @@ public class MainActivity extends Activity {
 
                 // start activity: Add Ingredients
                 Intent intent = new Intent(MainActivity.this, IngredientsActivity.class);
-                MainActivity.this.startActivityForResult(intent,0);
+                MainActivity.this.startActivity(intent);
 
 
             }
