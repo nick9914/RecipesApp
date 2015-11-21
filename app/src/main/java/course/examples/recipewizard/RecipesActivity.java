@@ -1,7 +1,7 @@
 package course.examples.recipewizard;
 
+import android.app.Activity;
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -11,7 +11,7 @@ import android.widget.ListView;
 
 import java.util.ArrayList;
 
-public class RecipesActivity extends AppCompatActivity {
+public class RecipesActivity extends Activity {
     ListView mlistView;
     ArrayList<RecipeListObject> mlistOfRecipes;
     RecipeListAdapter mAdapter;
