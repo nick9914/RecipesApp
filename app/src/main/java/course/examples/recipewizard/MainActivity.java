@@ -60,8 +60,8 @@ public class MainActivity extends Activity {
             public void onClick(View v) {
 
                 // start activity: Add Ingredients
-                Intent intent = new Intent(MainActivity.this, FilterActivity.class);
-                MainActivity.this.startActivityForResult(intent,0);
+                Intent intent = new Intent(MainActivity.this, IngredientsActivity.class);
+                MainActivity.this.startActivity(intent);
 
 
             }

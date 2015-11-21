@@ -23,6 +23,9 @@ public class RecipeListAdapter extends ArrayAdapter<RecipeListObject> {
         this.values = values;
     }
 
+
+
+
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         LayoutInflater inflater = (LayoutInflater) context

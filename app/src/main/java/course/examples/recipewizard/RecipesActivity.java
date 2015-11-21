@@ -1,6 +1,7 @@
 package course.examples.recipewizard;
 
-import android.support.v7.app.AppCompatActivity;
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -10,7 +11,7 @@ import android.widget.ListView;
 
 import java.util.ArrayList;
 
-public class RecipesActivity extends AppCompatActivity {
+public class RecipesActivity extends Activity {
     ListView mlistView;
     ArrayList<RecipeListObject> mlistOfRecipes;
     RecipeListAdapter mAdapter;
@@ -28,6 +29,11 @@ public class RecipesActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 /*TODO: react to selections in the list*/
+                Intent intent = new Intent(RecipesActivity.this,SingleRecipeActivity.class);
+                RecipeListObject recipe = (RecipeListObject) parent.getItemAtPosition(position);
+                recipe.packToIntent(intent);
+                startActivity(intent);
+
             }
         });
     }
