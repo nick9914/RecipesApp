@@ -9,15 +9,16 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Nicolas on 11/16/2015.
  */
 public class RecipeListAdapter extends ArrayAdapter<RecipeListObject> {
     private final Context context;
-    private final ArrayList<RecipeListObject> values;
+    private final List<RecipeListObject> values;
 
-    public RecipeListAdapter(Context context,ArrayList<RecipeListObject> values) {
+    public RecipeListAdapter(Context context,List<RecipeListObject> values) {
         super(context, -1, values);
         this.context = context;
         this.values = values;

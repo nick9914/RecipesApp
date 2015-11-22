@@ -9,12 +9,18 @@ import android.graphics.drawable.Drawable;
 public class RecipeListObject {
     private Drawable recipePicture;
     private String recipeLabel;
-    private String recipeDescription;
+    private String rating;
 
-    public RecipeListObject(Drawable recipePicture, String recipeLabel, String recipeDescription) {
+    public RecipeListObject() {
+        this.recipePicture = null;
+        this.recipeLabel = null;
+        this.rating = null;
+    }
+
+    public RecipeListObject(Drawable recipePicture, String recipeLabel, String rating) {
         this.recipePicture = recipePicture;
         this.recipeLabel = recipeLabel;
-        this.recipeDescription = recipeDescription;
+        this.rating = rating;
     }
 
     public Drawable getRecipePicture() {
@@ -26,7 +32,7 @@ public class RecipeListObject {
     }
 
     public String getRecipeDescription() {
-        return recipeDescription;
+        return rating;
     }
 
     public void setRecipePicture(Drawable recipePicture) {
@@ -37,21 +43,18 @@ public class RecipeListObject {
         this.recipeLabel = recipeLabel;
     }
 
-    public void setRecipeDescription(String recipeDescription) {
-        this.recipeDescription = recipeDescription;
-    }
+    public Intent packToIntent(Intent i) {
 
-    public Intent packToIntent(Intent i){
-
-        if (recipePicture!=null){
+        if (recipePicture != null) {
             //TODO: pack recipe picture into intent
 
         }
-
-        i.putExtra("recipeLable",recipeLabel);
-        i.putExtra("recipeDescription",recipeDescription);
+        i.putExtra("recipeLabel", recipeLabel);
+        i.putExtra("recipeRating", rating);
         return i;
-
     }
 
+    public void setRating(String rating) {
+        this.rating = rating;
+    }
 }
