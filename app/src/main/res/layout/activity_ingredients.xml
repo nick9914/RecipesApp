@@ -39,8 +39,8 @@
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Clear Input"
-            android:id="@+id/clearInput"/>
+            android:text="test"
+            android:id="@+id/testButton"/>
     </LinearLayout>
 
     <ListView
