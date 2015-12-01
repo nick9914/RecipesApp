@@ -45,8 +45,8 @@
 
     <ListView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="392dp"
         android:id="@+id/ingredientList"
-        android:layout_weight="0.03"/>
+        />
 
 </LinearLayout>
