@@ -1,26 +1,33 @@
 package course.examples.recipewizard;
-//  Authors : Andrew Cleary,
+/** Authors :
+ *  Andrew Cleary
+ *  Chris Lawrence
+ *  Daniel Lins
+ *  Jose Valdez
+ *  Zhengyang Tang
+ **/
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class MainActivity extends Activity {
+
+    ArrayList<String> ingredientsList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        /*TEST1*/
-        /*some change */
-        ArrayList<Integer> test = new ArrayList<>();
 
-        // Get a reference to the Press Me Button
+        //Button to go into the findRecipes activity
         final Button findRecipes = (Button) findViewById(R.id.FindRecipes);
         // Set an OnClickListener on this Button
         // Called each time the user clicks the Button
@@ -36,7 +43,8 @@ public class MainActivity extends Activity {
 
             }
         });
-        // Get a reference to the Press Me Button
+
+        //Button to go into the addNewRecipe activity
         final Button addNewRecipe = (Button) findViewById(R.id.AddNewRecipe);
         // Set an OnClickListener on this Button
         // Called each time the user clicks the Button
@@ -51,7 +59,8 @@ public class MainActivity extends Activity {
 
             }
         });
-        // Get a reference to the Press Me Button
+
+        //Button to launch the ingredients activity
         final Button addIngredients = (Button) findViewById(R.id.AddIngredients);
         // Set an OnClickListener on this Button
         // Called each time the user clicks the Button
@@ -61,9 +70,7 @@ public class MainActivity extends Activity {
 
                 // start activity: Add Ingredients
                 Intent intent = new Intent(MainActivity.this, IngredientsActivity.class);
-                MainActivity.this.startActivity(intent);
-
-
+                startActivityForResult(intent, 144);
             }
         });
     }
@@ -78,6 +85,28 @@ public class MainActivity extends Activity {
                 // The Intent's data Uri identifies which contact was selected.
 
                 // Do something with the contact here (bigger example below)
+            }
+        }
+
+        //This is the return from the Ingredients activity
+        //TODO
+        //This is extremely inefficient and just here to have something
+        //for others to work with. Will need to be revisisted.
+        if (requestCode == 144) {
+            if (resultCode == 144) {
+                String ingredients = data.getStringExtra("ingredientList");
+                ingredientsList = new ArrayList<>(Arrays.asList(ingredients.split("\n")));
+
+                //Attempt using Parcels to get the arraylist wholesale back from the Ingredients activity
+                /*
+                //Returning from IngredientsActivity, unpack the bundle of ingredients
+                Bundle b = getIntent().getExtras();
+                IngredientsParcel ip = b.getParcelable("claw");
+                ArrayList<String> ingredients = ip.getmData();
+                Log.i("FOO", "After unpack");
+
+                Log.i("FOO", ingredients.get(0));
+                */
             }
         }
     }

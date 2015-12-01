@@ -1,5 +1,6 @@
 package course.examples.recipewizard;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.JsonReader;
@@ -12,45 +13,35 @@ import android.widget.Button;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.List;
 
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-
-/**
- Look up auto-search completion things
- */
 
 public class IngredientsActivity extends AppCompatActivity {
 
     ArrayAdapter<String> m_adapter;
     ArrayList<String> mUserIngredients = new ArrayList<>();
-    String userIngredients;
-    ArrayList<String> ingredientsSearchValues;
+    ArrayList<String> allIngredientsSearchValues;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ingredients);
 
-        Button addIngredients = (Button) findViewById(R.id.addIngredients);
+        //Load the user input and list view output
         final TextView userInput = (EditText) findViewById(R.id.userInput);
         ListView ingredientList = (ListView) findViewById(R.id.ingredientList);
         m_adapter = new ArrayAdapter<>(this,android.R.layout.simple_list_item_1, mUserIngredients);
         ingredientList.setAdapter(m_adapter);
 
         //Load the User Ingredients file
-        userIngredients = loadUserIngredientFile();
         try {
-            ingredientsSearchValues = readJSON();
+            allIngredientsSearchValues = readJSON();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -58,41 +49,77 @@ public class IngredientsActivity extends AppCompatActivity {
 
         //Button to add the user input ingredients into the display of
         //currently added ingredients
+        Button addIngredients = (Button) findViewById(R.id.addIngredients);
         addIngredients.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
 
                 String input = userInput.getText().toString();
                 if (null != input && input.length() > 0) {
-                //TODO: Logic here to split user input on commas or spaces if they add multiple ones
-                    mUserIngredients.add(input);
-                    m_adapter.notifyDataSetChanged();
+                    if (mUserIngredients.contains(input)) {
+                        Toast.makeText(getApplicationContext(), "You have already entered this ingredient!", Toast.LENGTH_LONG).show();
+                    } else {
+                        //TODO: Logic here to split user input on commas or spaces if they add multiple ones
+                        mUserIngredients.add(input);
+                        m_adapter.notifyDataSetChanged();
+                    }
                 }
             }
         });
 
-        //Button to clear all ingredients in the current text input and
-        //display list
-        Button clearIngredients = (Button) findViewById(R.id.clearList);
-        clearIngredients.setOnClickListener(new View.OnClickListener() {
+        //Button to remove an ingredient from the display list
+        Button removeIngredients = (Button) findViewById(R.id.removeIngredients);
+        removeIngredients.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                mUserIngredients.clear();
+                String input = userInput.getText().toString();
+                mUserIngredients.remove(input);
                 m_adapter.notifyDataSetChanged();
             }
         });
 
-        Button testButton = (Button) findViewById(R.id.testButton);
+        Button returnIngredients = (Button) findViewById(R.id.returnIngredients);
+        returnIngredients.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                /*
+                IngredientsParcel ip = new IngredientsParcel();
+                ip.setmData(mUserIngredients);
+
+                Bundle retBundle = new Bundle();
+                retBundle.putParcelable("claw", ip);
+
+                Intent i = new Intent();
+                i.putExtras(retBundle);
+
+                setResult(144, i);
+                finish();
+                */
+
+                //TODO
+                //This is extremely inefficient and just here to have something
+                //for others to work with. Will need to be revisisted.
+                String retString = "";
+                for (String s : mUserIngredients) {
+                    retString += s + "\n";
+                }
+                Intent i = new Intent();
+                i.putExtra("ingredientList", retString);
+                setResult(144, i);
+                finish();
+            }
+        });
+
+        //TODO -- test buttons -- remove when done
+        Button testButton = (Button) findViewById(R.id.test);
         testButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                for (String s : ingredientsSearchValues) {
+                for (String s : allIngredientsSearchValues) {
                     mUserIngredients.add(s);
                     m_adapter.notifyDataSetChanged();
                 }
             }
         });
-
     }
 
     @Override
@@ -113,26 +140,13 @@ public class IngredientsActivity extends AppCompatActivity {
         if (id == R.id.clearList) {
             mUserIngredients.clear();
             m_adapter.notifyDataSetChanged();
+        } else if (id == R.id.saveList) {
+            //// TODO: 12/1/15  
+        } else if (id == R.id.loadList) {
+            //// TODO: 12/1/15
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    //Open the JSON file from assets
-    public String loadUserIngredientFile() {
-        String json = null;
-        try {
-            InputStream is = getAssets().open("user_ingredient_file.JSON");
-            int size = is.available();
-            byte[] buffer = new byte[size];
-            is.read(buffer);
-            is.close();
-            json = new String(buffer, "UTF-8");
-        } catch (IOException ex) {
-            ex.printStackTrace();
-            return null;
-        }
-        return json;
     }
 
     public ArrayList<String> readJSON() throws IOException {
@@ -150,14 +164,14 @@ public class IngredientsActivity extends AppCompatActivity {
     }
 
     public ArrayList<String> readIngredientsArray(JsonReader reader) throws IOException {
-        ArrayList<String> messages = new ArrayList();
+        ArrayList<String> ingredients = new ArrayList();
 
         reader.beginArray();
         while (reader.hasNext()) {
-            messages.add(readIngredients(reader));
+            ingredients.add(readIngredients(reader));
         }
         reader.endArray();
-        return messages;
+        return ingredients;
     }
 
     public String readIngredients(JsonReader reader) throws IOException {

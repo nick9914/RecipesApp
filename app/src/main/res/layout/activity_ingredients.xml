@@ -27,20 +27,26 @@
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Add Ingredients"
+            android:text="Add"
             android:id="@+id/addIngredients"/>
 
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Clear List"
-            android:id="@+id/clearList"/>
+            android:text="Remove"
+            android:id="@+id/removeIngredients"/>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Return"
+            android:id="@+id/returnIngredients"/>
 
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="test"
-            android:id="@+id/testButton"/>
+            android:id="@+id/test"/>
     </LinearLayout>
 
     <ListView
