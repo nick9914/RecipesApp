@@ -6,6 +6,9 @@
     <item android:id="@+id/clearList"
         android:title="Clear List"/>
 
+    <item android:id="@+id/clearInput"
+          android:title="Clear Input"/>
+
     <item android:id="@+id/saveList"
           android:title="Save List"/>
 
