@@ -53,7 +53,7 @@ public class MainActivity extends Activity {
             public void onClick(View v) {
 
                 // start activity: Add New Recipe
-                Intent intent = new Intent(MainActivity.this, AddRecipeActivity.class);
+                Intent intent = new Intent(MainActivity.this, FilterActivity.class);
                 MainActivity.this.startActivity(intent);
 
 
