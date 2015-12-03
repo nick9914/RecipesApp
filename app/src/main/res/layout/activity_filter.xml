@@ -1,12 +1,254 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" >
 
-    <Button
+    <!-- Title -->
+
+    <TextView
+        android:id="@+id/TitleLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Done"
-        android:id="@+id/done"
-        android:layout_gravity="center_horizontal" />
-</LinearLayout>
+        android:text="Filter"
+        android:textAppearance="?android:attr/textAppearanceLarge" >
+    </TextView>
+
+    <TextView
+        android:id="@+id/queryText"
+        android:layout_width="90dp"
+        android:layout_height="wrap_content"
+        android:text="Query Phrase:"
+        android:layout_alignParentLeft="true"
+        android:paddingTop="10dp"
+        android:layout_below="@+id/TitleLabel">
+    </TextView>
+
+    <EditText
+        android:id="@+id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:hint="e.g. soup/stew/pizza"
+        android:inputType="textShortMessage"
+        android:layout_below="@+id/TitleLabel"
+        android:layout_toEndOf="@+id/queryText">
+
+        <requestFocus />
+    </EditText>
+
+
+
+    <!-- Allergy setup -->
+
+    <TextView
+        android:id="@+id/spinnertext1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Select Allergies to exclude"
+        android:paddingTop="5dp"
+        android:layout_below="@+id/title">
+    </TextView>
+
+    <Spinner
+        android:id="@+id/spinner1"
+        android:layout_alignParentLeft="true"
+        android:layout_toLeftOf="@+id/spinnerbutton1"
+        android:layout_width="wrap_content"
+        android:layout_height="45dp"
+        android:layout_below="@+id/spinnertext1">
+    </Spinner>
+
+    <Button
+        android:id="@+id/spinnerbutton1"
+        android:layout_alignParentRight="true"
+        android:layout_width="90dp"
+        android:layout_height="45dp"
+        android:layout_below="@+id/spinnertext1"
+        android:text="Clear" >
+    </Button>
+
+    <TextView
+        android:id="@+id/selectedspinner1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Selected:"
+        android:layout_below="@+id/spinner1">
+    </TextView>
+
+    <!-- diets setup -->
+
+    <TextView
+        android:id="@+id/spinnertext2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Select Diets to follow"
+        android:paddingTop="5dp"
+        android:layout_below="@+id/selectedspinner1">
+    </TextView>
+
+    <Spinner
+        android:id="@+id/spinner2"
+        android:layout_alignParentLeft="true"
+        android:layout_toLeftOf="@+id/spinnerbutton2"
+        android:layout_width="wrap_content"
+        android:layout_height="45dp"
+        android:layout_below="@+id/spinnertext2">
+    </Spinner>
+
+    <Button
+        android:id="@+id/spinnerbutton2"
+        android:layout_alignParentRight="true"
+        android:layout_width="90dp"
+        android:layout_height="45dp"
+        android:layout_below="@+id/spinnertext2"
+        android:text="Clear" >
+    </Button>
+
+    <TextView
+        android:id="@+id/selectedspinner2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Selected:"
+        android:layout_below="@+id/spinner2">
+    </TextView>
+
+
+    <!-- cuisines setup -->
+
+    <TextView
+        android:id="@+id/spinnertext3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Select Cuisines to include"
+        android:paddingTop="5dp"
+        android:layout_below="@+id/selectedspinner2">
+    </TextView>
+
+    <Spinner
+        android:id="@+id/spinner3"
+        android:layout_alignParentLeft="true"
+        android:layout_toLeftOf="@+id/spinnerbutton3"
+        android:layout_width="wrap_content"
+        android:layout_height="45dp"
+        android:layout_below="@+id/spinnertext3">
+    </Spinner>
+
+    <Button
+        android:id="@+id/spinnerbutton3"
+        android:layout_alignParentRight="true"
+        android:layout_width="90dp"
+        android:layout_height="45dp"
+        android:layout_below="@+id/spinnertext3"
+        android:text="Clear" >
+    </Button>
+
+    <TextView
+        android:id="@+id/selectedspinner3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Selected:"
+        android:layout_below="@+id/spinner3">
+    </TextView>
+
+    <!-- courses setup -->
+
+    <TextView
+        android:id="@+id/spinnertext4"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Select Courses to include"
+        android:paddingTop="5dp"
+        android:layout_below="@+id/selectedspinner3">
+    </TextView>
+
+    <Spinner
+        android:id="@+id/spinner4"
+        android:layout_alignParentLeft="true"
+        android:layout_toLeftOf="@+id/spinnerbutton4"
+        android:layout_width="wrap_content"
+        android:layout_height="45dp"
+        android:layout_below="@+id/spinnertext4">
+    </Spinner>
+
+    <Button
+        android:id="@+id/spinnerbutton4"
+        android:layout_alignParentRight="true"
+        android:layout_width="90dp"
+        android:layout_height="45dp"
+        android:layout_below="@+id/spinnertext4"
+        android:text="Clear" >
+    </Button>
+
+    <TextView
+        android:id="@+id/selectedspinner4"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Selected:"
+        android:layout_below="@+id/spinner4">
+    </TextView>
+
+    <!-- holidays setup -->
+
+    <TextView
+        android:id="@+id/spinnertext5"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Select Holidays to include"
+        android:paddingTop="5dp"
+        android:layout_below="@+id/selectedspinner4">
+    </TextView>
+
+    <Spinner
+        android:id="@+id/spinner5"
+        android:layout_alignParentLeft="true"
+        android:layout_toLeftOf="@+id/spinnerbutton5"
+        android:layout_width="wrap_content"
+        android:layout_height="45dp"
+        android:layout_below="@+id/spinnertext5">
+    </Spinner>
+
+    <Button
+        android:id="@+id/spinnerbutton5"
+        android:layout_alignParentRight="true"
+        android:layout_width="90dp"
+        android:layout_height="45dp"
+        android:layout_below="@+id/spinnertext5"
+        android:text="Clear" >
+    </Button>
+
+    <TextView
+        android:id="@+id/selectedspinner5"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Selected:"
+        android:layout_below="@+id/spinner5">
+    </TextView>
+
+    <!-- Buttons -->
+
+    <Button
+        android:id="@+id/cancelButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:text="Cancel" />
+
+    <Button
+        android:id="@+id/resetButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:text="Reset" />
+
+    <Button
+        android:id="@+id/submitButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:text="Submit" />
+
+</RelativeLayout>
