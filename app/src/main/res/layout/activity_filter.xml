@@ -79,7 +79,7 @@
         android:layout_toLeftOf="@+id/spinnerbutton1"
         android:layout_toRightOf="@+id/spinnertext1"
         android:layout_width="wrap_content"
-        android:layout_height="41dp"
+        android:layout_height="45dp"
         android:layout_below="@+id/view">
     </Spinner>
 
@@ -87,7 +87,7 @@
         android:id="@+id/spinnerbutton1"
         android:layout_alignParentRight="true"
         android:layout_width="90dp"
-        android:layout_height="41dp"
+        android:layout_height="45dp"
         android:layout_below="@+id/view"
         android:text="Clear" >
     </Button>
@@ -126,7 +126,7 @@
         android:layout_toRightOf="@+id/spinnertext2"
         android:layout_toLeftOf="@+id/spinnerbutton2"
         android:layout_width="wrap_content"
-        android:layout_height="41dp"
+        android:layout_height="45dp"
         android:layout_below="@+id/view1">
     </Spinner>
 
@@ -134,7 +134,7 @@
         android:id="@+id/spinnerbutton2"
         android:layout_alignParentRight="true"
         android:layout_width="90dp"
-        android:layout_height="41dp"
+        android:layout_height="45dp"
         android:layout_below="@+id/view1"
         android:text="Clear" >
     </Button>
@@ -173,7 +173,7 @@
         android:layout_toRightOf="@+id/spinnertext3"
         android:layout_toLeftOf="@+id/spinnerbutton3"
         android:layout_width="wrap_content"
-        android:layout_height="41dp"
+        android:layout_height="45dp"
         android:layout_below="@+id/view2">
     </Spinner>
 
@@ -181,7 +181,7 @@
         android:id="@+id/spinnerbutton3"
         android:layout_alignParentRight="true"
         android:layout_width="90dp"
-        android:layout_height="41dp"
+        android:layout_height="45dp"
         android:layout_below="@+id/view2"
         android:text="Clear" >
     </Button>
@@ -220,7 +220,7 @@
         android:layout_toRightOf="@+id/spinnertext4"
         android:layout_toLeftOf="@+id/spinnerbutton4"
         android:layout_width="wrap_content"
-        android:layout_height="41dp"
+        android:layout_height="45dp"
         android:layout_below="@+id/view3">
     </Spinner>
 
@@ -228,7 +228,7 @@
         android:id="@+id/spinnerbutton4"
         android:layout_alignParentRight="true"
         android:layout_width="90dp"
-        android:layout_height="41dp"
+        android:layout_height="45dp"
         android:layout_below="@+id/view3"
         android:text="Clear" >
     </Button>
@@ -267,7 +267,7 @@
         android:layout_toRightOf="@+id/spinnertext5"
         android:layout_toLeftOf="@+id/spinnerbutton5"
         android:layout_width="wrap_content"
-        android:layout_height="41dp"
+        android:layout_height="45dp"
         android:layout_below="@+id/view4">
     </Spinner>
 
@@ -275,7 +275,7 @@
         android:id="@+id/spinnerbutton5"
         android:layout_alignParentRight="true"
         android:layout_width="90dp"
-        android:layout_height="41dp"
+        android:layout_height="45dp"
         android:layout_below="@+id/view4"
         android:text="Clear" >
     </Button>
