@@ -8,15 +8,15 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="List Ingredients:"
+        android:text="Input Ingredients:"
         android:id="@+id/ingredientsPrompt"
         android:layout_weight="0.03" />
 
-    <EditText
+    <AutoCompleteTextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/userInput"
-        android:layout_weight="0.03" />
+        android:layout_weight="0.03"/>
 
     <LinearLayout
         android:orientation="horizontal"
@@ -39,19 +39,15 @@
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Return"
-            android:id="@+id/returnIngredients"/>
+            android:text="Done"
+            android:id="@+id/returnIngredients"
+            />
 
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="test"
-            android:id="@+id/test"/>
     </LinearLayout>
 
     <ListView
         android:layout_width="match_parent"
-        android:layout_height="392dp"
+        android:layout_height="387dp"
         android:id="@+id/ingredientList"
         />
 
