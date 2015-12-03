@@ -210,7 +210,10 @@ public class FilterActivity extends Activity {
                     String s = parent.getItemAtPosition(pos).toString();
                     if(hs1.size()<5) {
                         if (hs1.add(s)) {
-                            tv1.append(" " + s);
+                            if(hs1.size()>1){
+                                tv1.append(", " + s);
+                            }else
+                                tv1.append(" " + s);
                         }
                     }else{
                         makeToast("Too many selected");
@@ -274,7 +277,10 @@ public class FilterActivity extends Activity {
                     String s = parent.getItemAtPosition(pos).toString();
                     if(hs2.size()<2) {
                         if (hs2.add(s)) {
-                            tv2.append(" " + s);
+                            if(hs2.size()>1){
+                                tv2.append(", " + s);
+                            }else
+                                tv2.append(" " + s);
                         }
                     }else{
                         makeToast("Too many selected");
@@ -332,7 +338,10 @@ public class FilterActivity extends Activity {
                     String s = parent.getItemAtPosition(pos).toString();
                     if(hs3.size()<5) {
                         if (hs3.add(s)) {
-                            tv3.append(" " + s);
+                            if(hs3.size()>1){
+                                tv3.append(", " + s);
+                            }else
+                                tv3.append(" " + s);
                         }
                     }else{
                         makeToast("Too many selected");
@@ -389,7 +398,11 @@ public class FilterActivity extends Activity {
                     String s = parent.getItemAtPosition(pos).toString();
                     if(hs4.size()<4) {
                         if (hs4.add(s)) {
-                            tv4.append(" " + s);
+                            if(hs4.size()>1){
+                                tv4.append(", " + s);
+                            }else {
+                                tv4.append(" " + s);
+                            }
                         }
                     }else{
                         makeToast("Too many selected");
@@ -447,8 +460,13 @@ public class FilterActivity extends Activity {
                     String s = parent.getItemAtPosition(pos).toString();
                     if(hs5.size()<3) {
                         if (hs5.add(s)) {
-                            tv5.append(" " + s);
+                            if(hs5.size()>1){
+                                tv5.append(", " + s);
+                            }else {
+                                tv5.append(" " + s);
+                            }
                         }
+
                     }else{
                         makeToast("Too many selected");
                     }
@@ -460,6 +478,50 @@ public class FilterActivity extends Activity {
 
 
 
+
+        // Get a reference to the submitButton Button
+        final Button cancel = (Button) findViewById(R.id.cancelButton);
+        // Set an OnClickListener on this Button
+        // Called each time the user clicks the Button
+        cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d("Cancel filter activity", " and returned RESULT_CANCELED");
+                setResult(RESULT_CANCELED);
+                finish();
+            }
+        });
+
+        // Get a reference to the submitButton Button
+        final Button reset = (Button) findViewById(R.id.resetButton);
+        // Set an OnClickListener on this Button
+        // Called each time the user clicks the Button
+        reset.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                querytext.setText("");
+                //clear set and text
+                tv1.setText("Selected:");
+                hs1.clear();
+                spinner1.setSelection(size1);
+                //clear set and text
+                tv2.setText("Selected:");
+                hs2.clear();
+                spinner2.setSelection(size2);
+                //clear set and text
+                tv3.setText("Selected:");
+                hs3.clear();
+                spinner3.setSelection(size3);
+                //clear set and text
+                tv4.setText("Selected:");
+                hs4.clear();
+                spinner4.setSelection(size4);
+                //clear set and text
+                tv5.setText("Selected:");
+                hs5.clear();
+                spinner5.setSelection(size5);
+            }
+        });
 
         // Get a reference to the submitButton Button
         final Button done = (Button) findViewById(R.id.submitButton);
@@ -514,7 +576,8 @@ public class FilterActivity extends Activity {
                     str.append(holidaysMap.get(s));
                 }
 
-                Log.d("Test Return from Filter", str.toString());
+
+                Log.d("Test Return from Filter", ": " + str.toString());
 
                 //make intent to return
                 Intent intent = new Intent();
