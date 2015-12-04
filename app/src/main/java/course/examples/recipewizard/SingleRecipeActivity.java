@@ -10,6 +10,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -23,6 +24,8 @@ import java.io.InputStreamReader;
 import java.lang.reflect.Array;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Andrew on 11/15/2015.
@@ -156,6 +159,7 @@ public class SingleRecipeActivity extends Activity  {
                 //Log.i("SingleRecipe", s);
                 stringdata = s;
                 logString();
+
                 JSONObject mObject = stringToJSON(s);
                 if (mObject==null){
                     onBackPressed();
@@ -163,49 +167,108 @@ public class SingleRecipeActivity extends Activity  {
 
                 //get image url from json
                 JSONObject imageObject = getImageObject(mObject);
-
                 if (imageObject==null){
-                    onBackPressed();
-                }
-                String bitmapUrl = getImageString(imageObject);
-                if (bitmapUrl==null){
-                    onBackPressed();
-                }
-                Log.i("SingleRecipe",bitmapUrl);
-                String[] pass = new String[1];
+                    setDefaultImage();
+                }else {
+                    String bitmapUrl = getImageString(imageObject);
+                    if (bitmapUrl == null) {
+                        setDefaultImage();
+                    }else {
 
-                //set testing image url
-                pass[0] = bitmapUrl;
-                new imageDownloaderTask().execute(pass);
+                        Log.i("SingleRecipe", bitmapUrl);
+                        String[] pass = new String[1];
+
+                        //set testing image url
+                        pass[0] = bitmapUrl;
+                        //setDefaultImage();
+                        new imageDownloaderTask().execute(pass);
+                    }
+                }
+
+                //get name from the json object
+                //get ingredient lines from the json object
+                //get energy and serves from the ingredients
+                SingleRecipeObject recipeObject= new SingleRecipeObject(mObject);
+                //set title
+                TextView titleView = (TextView)findViewById(R.id.recipe_name);
+                titleView.setText(recipeObject.name);
+
+                /*Log.i("SingleRecipe", "serves: " + recipeObject.serves + " energy: " + recipeObject.energy
+                        + " fat: " + recipeObject.fat + " protein: " + recipeObject.protein +
+                        " carb: " + recipeObject.carb);
+*/
+                TextView serve = (TextView)findViewById(R.id.serves_data);
+                TextView energy = (TextView)findViewById(R.id.energy_data);
+                TextView fat = (TextView)findViewById(R.id.fat_data);
+                TextView protein = (TextView)findViewById(R.id.protein_data);
+                TextView carb = (TextView)findViewById(R.id.carbs_data);
+
+                serve.setText(recipeObject.serves+"");
+
+                if(recipeObject.energy==-1) {
+                    energy.setText("not available");
+                }else{
+                    energy.setText(recipeObject.energy+" kcal");
+                }
+
+                if(recipeObject.fat==-1) {
+                    fat.setText("not available");
+                }else{
+                    fat.setText(recipeObject.fat+" g");
+                }
+
+                if(recipeObject.protein==-1) {
+                    protein.setText("not available");
+                }else{
+                    protein.setText(recipeObject.protein+" g");
+                }
+                if(recipeObject.carb==-1) {
+                    carb.setText("not available");
+                }else{
+                    carb.setText(recipeObject.carb + " g");
+                }
+
+                /* debug info for ingredients list
+                for (int i =0; i<recipeObject.ingredients.size();i++){
+                    Log.i("SingleRecipe",recipeObject.ingredients.get(i));
+                }*/
+
+                /*
+                * TODO: create an adapter for the listview of ingredients
+                *
+                *
+                *
+                *
+                * */
+
+
             }
             else{
-                Log.i("SingleRecipe","get null String");
+                onBackPressed();
+                Log.i("SingleRecipe","get null data string form server");
             }
         }
 
         private JSONObject stringToJSON(String data){
             try {
                 JSONObject mObject = new JSONObject(data);
-
                 return mObject;
             }catch (Exception e){
                 e.printStackTrace();
+                Log.i("SingleRecipe","unable to convert datastring to JSON object");
                 return null;
             }
         }
 
         private JSONObject getImageObject(JSONObject mObject){
             try{
-
                 JSONObject imageObject = (JSONObject)mObject.getJSONArray("images").get(0);
-                Log.i("SingleRecipe", imageObject.getClass().toString());
-
-
+                //Log.i("SingleRecipe", imageObject.getClass().toString());
 
                 return imageObject;
             }catch (Exception e){
                 e.printStackTrace();
-                Log.i("SingleRecipe", "No image url found");
+                Log.i("SingleRecipe", "No image object found");
                 return null;
             }
 
@@ -221,17 +284,21 @@ public class SingleRecipeActivity extends Activity  {
                 }else if (imageObject.has("hostedSmallUrl")){
                     return imageObject.getString("hostedSmallUrl");
                 }else{
+                    Log.i("SingleRecipe","no suitable image found in image object");
                     return null;
                 }
 
             }catch(Exception e){
                 e.printStackTrace();
-
+                Log.i("SingleRecipe", "no suitable image found in image object");
                 return null;
             }
-
         }
 
+        private void setDefaultImage(){
+            Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.no_image_available);
+            setContentBitmap(bitmap);
+        }
     }
 
     /*
@@ -271,6 +338,100 @@ public class SingleRecipeActivity extends Activity  {
         @Override
         protected void onPostExecute(Bitmap bitmap){
             setContentBitmap(bitmap);
+        }
+
+    }
+
+    private class SingleRecipeObject{
+        protected float energy;
+        protected List<String> ingredients;
+        protected String name;
+        protected int serves;
+        protected float carb,fat,protein;
+        protected JSONArray nutritions;
+
+
+        SingleRecipeObject(JSONObject mObject){
+            ingredients = new ArrayList<String>();
+            //energy = -1;
+            //name = null;
+            //serves = -1;
+
+            //get name
+            try{
+                name = mObject.getString("name");
+                //Log.i("SingleRecipe",name);
+            }catch (Exception e){
+                e.printStackTrace();
+                name = null;
+            }
+
+            //get energy
+
+            //get serves
+            try{
+                serves = mObject.getInt("numberOfServings");
+                //Log.i("SingleRecipe","serves: "+serves);
+            }catch (Exception e){
+                e.printStackTrace();
+                serves = -1;
+            }
+
+            //get nutritional estimates
+            try {
+                //Log.i("SingleRecipe", mObject.get("nutritionEstimates").getClass().toString());
+                nutritions = mObject.getJSONArray("nutritionEstimates");
+
+            }catch (Exception e){
+                e.printStackTrace();
+                Log.i("SingleRecipe","fail to retrive nutrition array");
+            }
+
+            carb = -1;
+            fat = -1;
+            protein = -1;
+
+            if (nutritions!=null){
+                try{
+                    //Log.i("SingleRecipe", nutritions.get(0).getClass().toString());
+                    for (int i = 0;i<nutritions.length();i++){
+                        JSONObject temp = nutritions.getJSONObject(i);
+                        //fat
+                        if (temp.getString("attribute").equals("FAT")){
+                            fat = (float) temp.getDouble("value");
+                        }
+                        //protein
+                        if (temp.getString("attribute").equals("PROCNT")){
+                            protein = (float) temp.getDouble("value");
+                        }
+                        //carb
+                        if (temp.getString("attribute").equals("CHOCDF")){
+                            carb = (float) temp.getDouble("value");
+                        }
+                        //energy
+                        if (temp.getString("attribute").equals("ENERC_KCAL")){
+                            energy = (float) temp.getDouble("value");
+                        }
+                    }
+
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+
+            }
+
+            try{
+                //Log.i("SingleRecipe",mObject.get("ingredientLines").getClass().toString());
+                JSONArray temp = mObject.getJSONArray("ingredientLines");
+                for (int i = 0; i< temp.length();i++){
+                    //Log.i("SingleRecipe",temp.getString(i));
+                    ingredients.add(temp.getString(i));
+                }
+
+            }catch (Exception e){
+                e.printStackTrace();
+                Log.i("SingleRecipe","ingredients not found");
+            }
 
         }
 

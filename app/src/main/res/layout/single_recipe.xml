@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent" android:layout_height="match_parent">
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:padding="20dp">
 
 
     <ImageView
@@ -37,42 +38,89 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Directions:"
-        android:id="@+id/Directions_text"
+        android:text="Nutrition Facts:"
+        android:id="@+id/nutrition_facts_linearLayout"
         android:layout_below="@+id/linearLayout"
         android:layout_alignParentStart="true" />
 
-    <LinearLayout
-        android:orientation="vertical"
-        android:layout_width="match_parent"
+    <TextView
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/Directions_text"
-        android:layout_alignParentStart="true"></LinearLayout>
+        android:text="number of serves yield:"
+        android:id="@+id/serves_text"
+        android:layout_below="@+id/nutrition_facts_linearLayout"
+        android:layout_alignStart="@+id/nutrition_facts_linearLayout"
+        android:paddingLeft="20dp" />
 
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
+    <TextView
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentStart="true"
-        android:weightSum="3">
+        android:text="energy:"
+        android:id="@+id/energy_text"
+        android:paddingLeft="20dp"
+        android:layout_below="@+id/serves_text"
+        android:layout_alignStart="@+id/serves_text" />
 
-        <ImageButton
-            android:layout_width="54dp"
-            android:layout_height="54dp"
-            android:id="@+id/fork_and_knife_button"
-            android:src="@drawable/fork_and_knife"
-            android:adjustViewBounds="true"
-            android:scaleType="fitCenter"
-            android:layout_weight="1" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="fat:"
+        android:id="@+id/fat_text"
+        android:paddingLeft="20dp"
+        android:layout_below="@+id/energy_text"
+        android:layout_alignStart="@+id/energy_text" />
 
-        <ImageButton
-            android:layout_width="54dp"
-            android:layout_height="54dp"
-            android:id="@+id/like_view"
-            android:src="@drawable/like"
-            android:adjustViewBounds="true"
-            android:scaleType="fitCenter"
-            android:layout_weight="1" />
-    </LinearLayout>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="protein:"
+        android:id="@+id/protein_text"
+        android:paddingLeft="20dp"
+        android:layout_below="@+id/fat_text"
+        android:layout_alignStart="@+id/fat_text" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="carbonhydrate:"
+        android:id="@+id/carb_text"
+        android:paddingLeft="20dp"
+        android:layout_below="@+id/protein_text"
+        android:layout_alignStart="@+id/protein_text" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/serves_data"
+        android:layout_alignTop="@+id/serves_text"
+        android:layout_alignEnd="@+id/linearLayout" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/energy_data"
+        android:layout_below="@+id/serves_data"
+        android:layout_alignEnd="@+id/serves_data" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/fat_data"
+        android:layout_below="@+id/energy_data"
+        android:layout_alignEnd="@+id/energy_data" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/protein_data"
+        android:layout_below="@+id/fat_data"
+        android:layout_alignEnd="@+id/fat_data" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/carbs_data"
+        android:layout_below="@+id/protein_data"
+        android:layout_alignEnd="@+id/protein_data" />
+
 </RelativeLayout>
