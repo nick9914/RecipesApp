@@ -8,7 +8,6 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -18,29 +17,28 @@ public class RecipeListAdapter extends ArrayAdapter<RecipeListObject> {
     private final Context context;
     private final List<RecipeListObject> values;
 
-    public RecipeListAdapter(Context context,List<RecipeListObject> values) {
+    public RecipeListAdapter(Context context, List<RecipeListObject> values) {
         super(context, -1, values);
         this.context = context;
         this.values = values;
     }
 
 
-
-
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        LayoutInflater inflater = (LayoutInflater) context
-                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View rowView = inflater.inflate(R.layout.recipe_list_view_layout, parent, false);
-        ImageView recipePicture =(ImageView) rowView.findViewById(R.id.recipePicture);
-        TextView recipeLabel = (TextView) rowView.findViewById(R.id.recipeLabel);
-        TextView recipeDescription = (TextView) rowView.findViewById(R.id.recipeDescription);
+        if(convertView == null) {
+            LayoutInflater inflater = (LayoutInflater) context
+                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            convertView = inflater.inflate(R.layout.recipe_grid_view_cell_layout, parent, false);
+        }
+        TextView recipeLabel = (TextView) convertView.findViewById(R.id.recipeLabel);
+        ImageView recipePicture = (ImageView) convertView.findViewById(R.id.recipePicture);
 
-        recipePicture.setImageDrawable(values.get(position).getRecipePicture());
+        recipePicture.setImageBitmap(values.get(position).getRecipePicture());
         recipeLabel.setText(values.get(position).getRecipeLabel());
-        recipeDescription.setText(values.get(position).getRecipeDescription());
 
-        return rowView;
+
+        return convertView;
 
     }
 }

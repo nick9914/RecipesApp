@@ -1,29 +1,31 @@
 package course.examples.recipewizard;
 
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
+import android.graphics.Bitmap;
 
-/**
- * Created by Nicolas on 11/16/2015.
- */
+
 public class RecipeListObject {
-    private Drawable recipePicture;
+    public static final int MY_WIDTH = 180;
+    public static final int MY_HEIGHT = 180;
+    private Bitmap recipePicture;
     private String recipeLabel;
     private String rating;
+    private String pictureURL;
 
     public RecipeListObject() {
         this.recipePicture = null;
         this.recipeLabel = null;
         this.rating = null;
+        this.pictureURL = null;
     }
 
-    public RecipeListObject(Drawable recipePicture, String recipeLabel, String rating) {
+    public RecipeListObject(Bitmap recipePicture, String recipeLabel, String rating) {
         this.recipePicture = recipePicture;
         this.recipeLabel = recipeLabel;
         this.rating = rating;
     }
 
-    public Drawable getRecipePicture() {
+    public Bitmap getRecipePicture() {
         return recipePicture;
     }
 
@@ -35,8 +37,9 @@ public class RecipeListObject {
         return rating;
     }
 
-    public void setRecipePicture(Drawable recipePicture) {
-        this.recipePicture = recipePicture;
+    public void setRecipePicture(Bitmap recipePicture) {
+        Bitmap bitmapScaled = Bitmap.createScaledBitmap(recipePicture, MY_WIDTH, MY_HEIGHT, true);
+        this.recipePicture = bitmapScaled;
     }
 
     public void setRecipeLabel(String recipeLabel) {
@@ -44,17 +47,22 @@ public class RecipeListObject {
     }
 
     public Intent packToIntent(Intent i) {
-
-        if (recipePicture != null) {
-            //TODO: pack recipe picture into intent
-
-        }
+        i.putExtra("recipePicture", recipePicture);
         i.putExtra("recipeLabel", recipeLabel);
-        i.putExtra("recipeRating", rating);
+
         return i;
     }
 
     public void setRating(String rating) {
         this.rating = rating;
+    }
+
+    public void setPictureURL(String pictureURL) {
+        pictureURL = pictureURL.replace("s90", "s180");
+        this.pictureURL = pictureURL;
+    }
+
+    public String getPictureURL() {
+        return pictureURL;
     }
 }

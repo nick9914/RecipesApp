@@ -2,17 +2,24 @@ package course.examples.recipewizard;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.GridView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -30,25 +37,33 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class RecipesActivity extends Activity {
-    ListView mlistView;
+    private static final Integer MAX_PAGINATION_RESULTS = 50;
+    Integer paginationFrom;
+    GridView mGridview;
+    Integer totalMatchCount;
+    List<RecipeListObject> mPaginationListOfRecipes;
     List<RecipeListObject> mlistOfRecipes;
     RecipeListAdapter mAdapter;
+    private ProgressBar mProgressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         /*Initialize global variables and listners*/
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_recipes);
-        mlistView = (ListView) findViewById(R.id.listview);
+        /*TODO change this when merging*/
+        setContentView(R.layout.recipes_grid_view_layout);
+        paginationFrom = 0;
+        mGridview = (GridView) findViewById(R.id.gridview);
+        mPaginationListOfRecipes = new ArrayList<>();
         mlistOfRecipes = new ArrayList<>();
         mAdapter = new RecipeListAdapter(this, mlistOfRecipes);
-        mlistView.setAdapter(mAdapter);
+        mGridview.setAdapter(mAdapter);
+        mProgressBar = (ProgressBar) findViewById(R.id.progressBar);
 
-        mlistView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        mGridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                /*TODO: react to selections in the list*/
-                Intent intent = new Intent(RecipesActivity.this,SingleRecipeActivity.class);
+                Intent intent = new Intent(RecipesActivity.this, SingleRecipeActivity.class);
                 RecipeListObject recipe = (RecipeListObject) parent.getItemAtPosition(position);
                 recipe.packToIntent(intent);
                 startActivity(intent);
@@ -56,15 +71,36 @@ public class RecipesActivity extends Activity {
             }
         });
 
+        mGridview.setOnScrollListener(new EndlessScrollListener() {
+            @Override
+            public boolean onLoadMore(int page, int totalItemsCount) {
+                // Triggered only when new data needs to be appended to the list
+                // Add whatever code is needed to append new items to your AdapterView customLoadMoreDataFromApi(page);
+                // or customLoadMoreDataFromApi(totalItemsCount);
+                customLoadMoreDataFromApi(totalItemsCount);
+                return true; // ONLY if more data is actually being loaded; false otherwise.
+            }
+        });
+
         /*Check Network Connection*/
         if (!checkNetworkConnection()) {
             /*TODO: Go back to previous activity*/
+            Toast.makeText(RecipesActivity.this, "No internet Connection", Toast.LENGTH_SHORT).show();
             finish();
         }
         /*Get Recipes from Yummly API*/
         new HttpGetRecipesTask().execute();
 
 
+    }
+
+    public void customLoadMoreDataFromApi(int totalItemsCount) {
+        if(totalItemsCount < MAX_PAGINATION_RESULTS  && totalItemsCount < totalMatchCount) {
+            new HttpGetRecipesTask().execute();
+        }
+        // This method probably sends out a network request and appends new data items to your adapter.
+        // Use the offset value and add it as a parameter to your API request to retrieve paginated data.
+        // Deserialize API response and then construct new objects to append to the adapter
     }
 
     public boolean checkNetworkConnection() {
@@ -76,6 +112,7 @@ public class RecipesActivity extends Activity {
             Toast.makeText(this.getApplicationContext(), "No Network Connection", Toast.LENGTH_SHORT).show();
             return false;
         }
+
 
     }
 
@@ -116,6 +153,12 @@ public class RecipesActivity extends Activity {
 
 
         @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            mProgressBar.setVisibility(View.VISIBLE);
+        }
+
+        @Override
         protected List<RecipeListObject> doInBackground(Void... params) {
             try {
                 /*Get ingredients for user_ingredient_file.JSON*/
@@ -127,10 +170,13 @@ public class RecipesActivity extends Activity {
                     JSONObject ingredient = userIngredients.getJSONObject(i);
                     String searchIngredientName = ingredient.getString("searchValue");
                     urlWithParameters.append("&excludedIngredient[]=");
-                    urlWithParameters.append(searchIngredientName);
+                    //Encode value
+                    urlWithParameters.append(searchIngredientName.replaceAll(" ", "%20"));
                 }
+                urlWithParameters.append("&start=" + paginationFrom);
                 urlWithParameters.append("&maxResult=" + MAX_RESULT);
                 urlWithParameters.append("&requirePictures=true");
+
                 return downloadUrl(urlWithParameters.toString());
 
             } catch (JSONException e) {
@@ -146,19 +192,26 @@ public class RecipesActivity extends Activity {
 
         }
 
+        @Override
+        protected void onPostExecute(List<RecipeListObject> recipeListObjects) {
+            Log.i(DEBUG_TAG, "Finished Loading Recipe Objects");
+            if(!mPaginationListOfRecipes.isEmpty()) {
+                mPaginationListOfRecipes.clear();
+            }
+            mPaginationListOfRecipes.addAll(recipeListObjects);
+            paginationFrom += MAX_RESULT;
+            /*Get images for recipe objects*/
+            getRecipeImages();
+
+        }
+
         private List<RecipeListObject> downloadUrl(String myurl) throws IOException {
-            /*TODO: Finish this Method*/
             /*http://developer.android.com/training/basics/network-ops/connecting.html#connection*/
             InputStream is = null;
             String contentAsString;
             try {
                 URL url = new URL(myurl);
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                conn.setReadTimeout(10000  /*milliseconds*/);
-                conn.setConnectTimeout(15000 /*milliseconds*/);
-                conn.setRequestMethod("GET");
-                conn.setDoInput(true);
-                // Starts the query
                 conn.connect();
                 int response = conn.getResponseCode();
                 Log.d(DEBUG_TAG, "The response is: " + response);
@@ -167,8 +220,6 @@ public class RecipesActivity extends Activity {
                 // Convert the InputStream into a string
                 contentAsString = readStream(is);
 
-                return fromJSONToRecipeListObjects(contentAsString);
-
                 // Makes sure that the InputStream is closed after the app is
                 // finished using it.
             } finally {
@@ -176,29 +227,31 @@ public class RecipesActivity extends Activity {
                     is.close();
                 }
             }
+            return fromJSONToRecipeListObjects(contentAsString);
         }
 
         private List<RecipeListObject> fromJSONToRecipeListObjects(String contentAsString) {
+            List<RecipeListObject> listOfRecipes = new ArrayList<>();
             try {
                 JSONObject jsonObject = new JSONObject(contentAsString);
+                if(totalMatchCount == null){
+                    totalMatchCount = jsonObject.getInt("totalMatchCount");
+                }
                 JSONArray matchesArray = (JSONArray) jsonObject.get("matches");
-                List<RecipeListObject> listOfRecipes = new ArrayList<>();
                 for (int i = 0; i < matchesArray.length(); i++) {
                     JSONObject JSONRecipeObject = matchesArray.getJSONObject(i);
                     RecipeListObject recipeListObj = new RecipeListObject();
                     recipeListObj.setRating(JSONRecipeObject.getString("rating"));
-                    recipeListObj.setRecipeLabel("recipeName");
-                    /*TODO: Write Code to download image*/
-                    recipeListObj.setRecipePicture(null);
+                    recipeListObj.setRecipeLabel(JSONRecipeObject.getString("recipeName"));
+                    JSONObject imageUrlJsonObj = JSONRecipeObject.getJSONObject("imageUrlsBySize");
+                    recipeListObj.setPictureURL(imageUrlJsonObj.getString("90"));
                     listOfRecipes.add(recipeListObj);
                 }
-                return listOfRecipes;
-
             } catch (Exception e) {
                 e.printStackTrace();
                 return null;
             }
-
+            return listOfRecipes;
         }
 
         private String readStream(InputStream in) {
@@ -240,12 +293,46 @@ public class RecipesActivity extends Activity {
             }
             return json;
         }
+    }
+
+    private void getRecipeImages() {
+        new HttpGetImages().execute();
+    }
+
+    private class HttpGetImages extends AsyncTask<Void, Void, Void> {
 
         @Override
-        protected void onPostExecute(List<RecipeListObject> recipeListObjects) {
-            Log.i(DEBUG_TAG, "Finished Loading Recipe Objects");
-            mlistOfRecipes = recipeListObjects;
+        protected Void doInBackground(Void... params) {
+            for(RecipeListObject recipeObj : mPaginationListOfRecipes) {
+                recipeObj.setRecipePicture(LoadImageFromWebOperations(recipeObj.getPictureURL()));
+            }
+            return null;
         }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            mlistOfRecipes.addAll(mPaginationListOfRecipes);
+            mAdapter.notifyDataSetChanged();
+            mProgressBar.setVisibility(View.INVISIBLE);
+        }
+
+        private Bitmap LoadImageFromWebOperations(String url) {
+            try {
+                Bitmap x;
+                HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
+                connection.connect();
+                InputStream input = connection.getInputStream();
+
+                x = BitmapFactory.decodeStream(input);
+
+                return x;
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
+
     }
 
 }
