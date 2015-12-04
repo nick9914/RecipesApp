@@ -17,9 +17,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 import android.view.View;
-import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 
@@ -94,6 +92,8 @@ public class IngredientsActivity extends AppCompatActivity {
         returnIngredients.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //Attempt to pass the array list back as a parcel
+                //failure
                 /*
                 IngredientsParcel ip = new IngredientsParcel();
                 ip.setmData(mUserIngredients);
@@ -108,13 +108,19 @@ public class IngredientsActivity extends AppCompatActivity {
                 finish();
                 */
 
-                //TODO
-                //This is extremely inefficient and just here to have something
-                //for others to work with. Will need to be revisisted.
-                String retString = "";
+                //Remove all the user input from the ingredients search values
+                ArrayList<String> retArrList = allIngredientsSearchValues;
                 for (String s : mUserIngredients) {
+                    retArrList.remove(s);
+                }
+
+                //Create the return string;
+                String retString = "'";
+                for (String s : retArrList) {
                     retString += s + "\n";
                 }
+
+                //Package the string in an intent and return it
                 Intent i = new Intent();
                 i.putExtra("ingredientList", retString);
                 setResult(144, i);

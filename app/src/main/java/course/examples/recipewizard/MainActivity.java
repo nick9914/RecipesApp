@@ -89,24 +89,11 @@ public class MainActivity extends Activity {
         }
 
         //This is the return from the Ingredients activity
-        //TODO
-        //This is extremely inefficient and just here to have something
-        //for others to work with. Will need to be revisisted.
         if (requestCode == 144) {
             if (resultCode == 144) {
                 String ingredients = data.getStringExtra("ingredientList");
                 ingredientsList = new ArrayList<>(Arrays.asList(ingredients.split("\n")));
-
-                //Attempt using Parcels to get the arraylist wholesale back from the Ingredients activity
-                /*
-                //Returning from IngredientsActivity, unpack the bundle of ingredients
-                Bundle b = getIntent().getExtras();
-                IngredientsParcel ip = b.getParcelable("claw");
-                ArrayList<String> ingredients = ip.getmData();
-                Log.i("FOO", "After unpack");
-
-                Log.i("FOO", ingredients.get(0));
-                */
+                //Log.i("FOO", new Integer(ingredientsList.size()).toString());
             }
         }
     }
