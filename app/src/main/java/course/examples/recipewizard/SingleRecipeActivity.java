@@ -2,13 +2,20 @@ package course.examples.recipewizard;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.ImageView;
 import android.widget.Toast;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -20,9 +27,14 @@ import java.net.URL;
 /**
  * Created by Andrew on 11/15/2015.
  */
+
+
+
 public class SingleRecipeActivity extends Activity  {
 
-    //private static String recipeCode;
+    private static String stringdata;
+
+    ImageView recipe_picture;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -141,16 +153,137 @@ public class SingleRecipeActivity extends Activity  {
         @Override
         protected void onPostExecute(String s){
             if (s!=null) {
-                Log.i("SingleRecipe", s);
+                //Log.i("SingleRecipe", s);
+                stringdata = s;
+                logString();
+                JSONObject mObject = stringToJSON(s);
+                if (mObject==null){
+                    onBackPressed();
+                }
+
+                //get image url from json
+                JSONObject imageObject = getImageObject(mObject);
+
+                if (imageObject==null){
+                    onBackPressed();
+                }
+                String bitmapUrl = getImageString(imageObject);
+                if (bitmapUrl==null){
+                    onBackPressed();
+                }
+                Log.i("SingleRecipe",bitmapUrl);
+                String[] pass = new String[1];
+
+                //set testing image url
+                pass[0] = bitmapUrl;
+                new imageDownloaderTask().execute(pass);
             }
             else{
                 Log.i("SingleRecipe","get null String");
             }
         }
 
+        private JSONObject stringToJSON(String data){
+            try {
+                JSONObject mObject = new JSONObject(data);
+
+                return mObject;
+            }catch (Exception e){
+                e.printStackTrace();
+                return null;
+            }
+        }
+
+        private JSONObject getImageObject(JSONObject mObject){
+            try{
+
+                JSONObject imageObject = (JSONObject)mObject.getJSONArray("images").get(0);
+                Log.i("SingleRecipe", imageObject.getClass().toString());
+
+
+
+                return imageObject;
+            }catch (Exception e){
+                e.printStackTrace();
+                Log.i("SingleRecipe", "No image url found");
+                return null;
+            }
+
+        }
+
+        private String getImageString(JSONObject imageObject){
+            try{
+                if (imageObject.has("hostedLargeUrl")) {
+                    return imageObject.getString("hostedLargeUrl");
+
+                }else if (imageObject.has("hostedMediumUrl")){
+                    return imageObject.getString("hostedMediumUrl");
+                }else if (imageObject.has("hostedSmallUrl")){
+                    return imageObject.getString("hostedSmallUrl");
+                }else{
+                    return null;
+                }
+
+            }catch(Exception e){
+                e.printStackTrace();
+
+                return null;
+            }
+
+        }
+
+    }
+
+    /*
+    * downloader task for recipe image in case can not pass image through the intent
+    *
+    *
+    */
+
+    private class imageDownloaderTask extends AsyncTask<String,Void,Bitmap>{
+
+        @Override
+        protected Bitmap doInBackground(String... pass){
+            try {
+                String murl = pass[0];
+                URL url = new URL(murl);
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setReadTimeout(10000  /*milliseconds*/);
+                conn.setConnectTimeout(15000 /*milliseconds*/);
+                conn.setRequestMethod("GET");
+                conn.setDoInput(true);
+                // Starts the query
+                conn.connect();
+                InputStream is = conn.getInputStream();
+                BufferedInputStream bis = new BufferedInputStream(is);
+
+                Bitmap bitmap = BitmapFactory.decodeStream(bis);
+                bis.close();
+                is.close();
+                return bitmap;
+            }catch (Exception e){
+                e.printStackTrace();
+                Log.i("SingleRecipe","error downloading bitmap");
+                return null;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(Bitmap bitmap){
+            setContentBitmap(bitmap);
+
+        }
+
     }
 
 
+    private void logString(){
+        Log.i("SingleRecipe",stringdata);
+    }
 
+    public void setContentBitmap(Bitmap bitmap){
+        recipe_picture = (ImageView) findViewById(R.id.recipe_image);
+        recipe_picture.setImageBitmap(bitmap);
+    }
 
 }
