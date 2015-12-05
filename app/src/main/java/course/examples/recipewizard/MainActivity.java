@@ -70,6 +70,20 @@ public class MainActivity extends Activity {
 
                 // start activity: Add Ingredients
                 Intent intent = new Intent(MainActivity.this, IngredientsActivity.class);
+
+                //This will load all of the ingredients back into a string
+                //with the ingredients separated by newline characters then put
+                //it back into the ingredients activity so the list can be re-edited
+                //if you go back into it
+                if (ingredientsList != null) {
+                    String sendString = "";
+                    for (String s : ingredientsList) {
+                        sendString += s + "\n";
+                    }
+                    intent.putExtra("ingredientsList", sendString);
+                }
+
+                //Start the fun!
                 startActivityForResult(intent, 144);
             }
         });

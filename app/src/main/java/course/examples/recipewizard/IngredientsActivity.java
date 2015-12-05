@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import android.view.View;
 import android.widget.ListView;
@@ -35,6 +36,7 @@ public class IngredientsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ingredients);
 
+        //Load the user input field first so it can be restored if applicable
         userInput = (AutoCompleteTextView) findViewById(R.id.userInput);
 
         if (savedInstanceState != null) {
@@ -50,7 +52,8 @@ public class IngredientsActivity extends AppCompatActivity {
             }
         }
 
-        //Load the User Ingredients file
+
+        //Restore the search value list or load it from scratch
         if (restoreSearchValues != null) {
             allIngredientsSearchValues = restoreSearchValues;
         } else {
@@ -61,7 +64,23 @@ public class IngredientsActivity extends AppCompatActivity {
             }
         }
 
-        //Load the user input and list view output
+        //This restore the user input list of ingredients based on a list
+        //that has been pushed back into the activity via a string in an intent
+        //that has ingredients separated by newline characters
+        Intent intent = getIntent();
+        String foo = intent.getStringExtra("ingredientsList");
+        if (foo != null) {
+            ArrayList<String> restore = allIngredientsSearchValues;
+            ArrayList<String> previousList = new ArrayList<>(Arrays.asList(foo.split("\n")));
+            for (String s : previousList) {
+                    if ((allIngredientsSearchValues.contains(s))) {
+                        restore.remove(s);
+                    }
+                }
+            mUserIngredients = restore;
+        }
+
+        //Load the list view output
         m_adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, mUserIngredients);
         ListView ingredientList = (ListView) findViewById(R.id.ingredientList);
         ingredientList.setAdapter(m_adapter);
@@ -70,7 +89,6 @@ public class IngredientsActivity extends AppCompatActivity {
         m_suggestions = new ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line,
                 allIngredientsSearchValues);
         userInput.setAdapter(m_suggestions);
-
 
         //Button to add the user input ingredients into the display of
         //currently added ingredients
@@ -134,7 +152,7 @@ public class IngredientsActivity extends AppCompatActivity {
                 }
 
                 //Create the return string;
-                String retString = "'";
+                String retString = "";
                 for (String s : retArrList) {
                     retString += s + "\n";
                 }
@@ -155,6 +173,8 @@ public class IngredientsActivity extends AppCompatActivity {
             sanitized_input = in.toLowerCase();
             if (mUserIngredients.contains(sanitized_input)) {
                 Toast.makeText(getApplicationContext(), "You have already entered this ingredient!", Toast.LENGTH_LONG).show();
+            } else if (!(allIngredientsSearchValues.contains(sanitized_input))) {
+                Toast.makeText(getApplicationContext(), "That ingredient is not recognized!", Toast.LENGTH_LONG).show();
             } else {
                 mUserIngredients.add(sanitized_input);
                 m_adapter.notifyDataSetChanged();
@@ -196,15 +216,13 @@ public class IngredientsActivity extends AppCompatActivity {
             m_adapter.notifyDataSetChanged();
         } else if (id == R.id.clearInput) {
             userInput.setText("");
-        }else if (id == R.id.saveList) {
-            //// TODO: 12/1/15  
-        } else if (id == R.id.loadList) {
-            //// TODO: 12/1/15
         }
 
         return super.onOptionsItemSelected(item);
     }
 
+
+    //Read the user ingredients JSON file and load in the search values
     public ArrayList<String> readJSON() throws IOException {
         InputStream is = getAssets().open("user_ingredient_file.JSON");
         JsonReader reader = new JsonReader(new InputStreamReader(is, "UTF-8"));
@@ -246,8 +264,8 @@ public class IngredientsActivity extends AppCompatActivity {
         return retValue;
     }
 
+    //Save the state of the app so it can be restore on rotation
     public void onSaveInstanceState(Bundle savedState) {
-
         super.onSaveInstanceState(savedState);
 
         savedState.putStringArrayList("userIngredients", mUserIngredients);
