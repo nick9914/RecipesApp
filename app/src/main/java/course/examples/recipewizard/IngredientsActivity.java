@@ -177,10 +177,10 @@ public class IngredientsActivity extends AppCompatActivity {
                 }
 
                 //Package the string in an intent and return it
-                Intent i = new Intent();
+                Intent i = new Intent(IngredientsActivity.this, RecipesActivity.class);
                 i.putExtra("ingredientList", retString);
                 setResult(144, i);
-                finish();
+                startActivity(i);
             }
         });
 
