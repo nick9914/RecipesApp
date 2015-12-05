@@ -9,7 +9,6 @@ package course.examples.recipewizard;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -27,16 +26,15 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //Button to go into the findRecipes activity
-        final Button findRecipes = (Button) findViewById(R.id.FindRecipes);
+        //Button to go into the add filters activity
+        final Button addFilters = (Button) findViewById(R.id.addFilters);
         // Set an OnClickListener on this Button
         // Called each time the user clicks the Button
-        findRecipes.setOnClickListener(new View.OnClickListener() {
+        addFilters.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                // start activity: Find Recipes
-                Intent intent = new Intent(MainActivity.this, RecipesActivity.class);
+                Intent intent = new Intent(MainActivity.this, FilterActivity.class);
                 MainActivity.this.startActivity(intent);
 
 
@@ -44,16 +42,15 @@ public class MainActivity extends Activity {
             }
         });
 
-        //Button to go into the addNewRecipe activity
-        final Button addNewRecipe = (Button) findViewById(R.id.AddNewRecipe);
+        //Button to go into the recipes activity which will actually search for recipes
+        final Button findRecipes = (Button) findViewById(R.id.findRecipes);
         // Set an OnClickListener on this Button
         // Called each time the user clicks the Button
-        addNewRecipe.setOnClickListener(new View.OnClickListener() {
+        findRecipes.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                // start activity: Add New Recipe
-                Intent intent = new Intent(MainActivity.this, FilterActivity.class);
+                Intent intent = new Intent(MainActivity.this, RecipesActivity.class);
                 MainActivity.this.startActivity(intent);
 
 

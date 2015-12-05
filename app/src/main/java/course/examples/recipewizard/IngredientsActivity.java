@@ -278,4 +278,19 @@ public class IngredientsActivity extends AppCompatActivity {
         savedState.putString("userInput", userInput.getText().toString());
     }
 
+    public void onRestoreInstanceState (Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+
+        mUserIngredients = savedInstanceState.getStringArrayList("userIngredients");
+        allIngredientsSearchValues = savedInstanceState.getStringArrayList("searchValues");
+        userInput.setText(savedInstanceState.getString("userInput"));
+    }
+
+    public void onPause() {
+        super.onPause();
+    }
+
+    public void onResume() {
+        super.onResume();
+    }
 }
