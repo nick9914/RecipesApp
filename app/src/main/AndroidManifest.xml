@@ -23,9 +23,6 @@
             android:name=".FilterActivity"
             android:label="FilterActivity" />
         <activity
-            android:name=".AddRecipeActivity"
-            android:label="AddRecipeActivity" />
-        <activity
             android:name=".IngredientsActivity"
             android:label="IngredientsActivity" />
         <activity
