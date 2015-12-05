@@ -306,6 +306,15 @@ public class IngredientsActivity extends AppCompatActivity {
         return retValue;
     }
 
+    //Save the state of the app so it can be restore on rotation
+    public void onSaveInstanceState(Bundle savedState) {
+        super.onSaveInstanceState(savedState);
+
+        savedState.putStringArrayList("userIngredients", mUserIngredients);
+        savedState.putStringArrayList("searchValues", allIngredientsSearchValues);
+        savedState.putString("userInput", userInput.getText().toString());
+    }
+
     /*---------------------------------------------------------------------------------*/
 
     /** Create a file Uri for saving an image or video */
@@ -398,7 +407,6 @@ public class IngredientsActivity extends AppCompatActivity {
             }
             return "error";
         }
-
         @Override
         protected void onPostExecute(String s) {
             mParsedText = s;
@@ -421,6 +429,7 @@ public class IngredientsActivity extends AppCompatActivity {
             showToast(ingredientsRecognized);
             addRecognizedIngredients(mParsedResults);
         }
+
     }
 
     private void addRecognizedIngredients(List<String> recognizedIngredients) {
@@ -429,18 +438,9 @@ public class IngredientsActivity extends AppCompatActivity {
         }
     }
 
+
     private void showToast(String input) {
         Toast.makeText(getApplicationContext(), input, Toast.LENGTH_SHORT).show();
-    }
-
-
-    //Save the state of the app so it can be restore on rotation
-    public void onSaveInstanceState(Bundle savedState) {
-        super.onSaveInstanceState(savedState);
-
-        savedState.putStringArrayList("userIngredients", mUserIngredients);
-        savedState.putStringArrayList("searchValues", allIngredientsSearchValues);
-        savedState.putString("userInput", userInput.getText().toString());
     }
 
     public void onRestoreInstanceState (Bundle savedInstanceState) {
