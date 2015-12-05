@@ -12,6 +12,7 @@
         android:theme="@style/AppTheme" >
         <activity
             android:name=".MainActivity"
+            android:screenOrientation="portrait"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -21,15 +22,18 @@
         </activity>
         <activity
             android:name=".FilterActivity"
+            android:screenOrientation="portrait"
             android:label="FilterActivity" />
         <activity
             android:name=".IngredientsActivity"
             android:label="IngredientsActivity" />
         <activity
             android:name=".SingleRecipeActivity"
+            android:screenOrientation="portrait"
             android:label="SingleRecipeActivity" />
         <activity
             android:name=".RecipesActivity"
+            android:screenOrientation="portrait"
             android:label="@string/title_activity_recipes" >
         </activity>
     </application>
