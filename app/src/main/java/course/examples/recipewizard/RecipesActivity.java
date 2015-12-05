@@ -38,13 +38,15 @@ import java.util.List;
 
 public class RecipesActivity extends Activity {
     private static final Integer MAX_PAGINATION_RESULTS = 50;
-    Integer paginationFrom;
-    GridView mGridview;
-    Integer totalMatchCount;
-    List<RecipeListObject> mPaginationListOfRecipes;
-    List<RecipeListObject> mlistOfRecipes;
-    RecipeListAdapter mAdapter;
+    private Integer paginationFrom;
+    private GridView mGridview;
+    private Integer totalMatchCount;
+    private List<RecipeListObject> mPaginationListOfRecipes;
+    private List<RecipeListObject> mlistOfRecipes;
+    private RecipeListAdapter mAdapter;
     private ProgressBar mProgressBar;
+    private String mIngredientList;
+    private boolean mIngredientListProvided;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +60,8 @@ public class RecipesActivity extends Activity {
         mAdapter = new RecipeListAdapter(this, mlistOfRecipes);
         mGridview.setAdapter(mAdapter);
         mProgressBar = (ProgressBar) findViewById(R.id.progressBar);
+        mIngredientListProvided = false;
+        mIngredientList = null;
 
         mGridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -86,6 +90,15 @@ public class RecipesActivity extends Activity {
             Toast.makeText(RecipesActivity.this, "No internet Connection", Toast.LENGTH_SHORT).show();
             finish();
         }
+        /*Check if statrted from Ingredients Activity*/
+        Intent intent = getIntent();
+        if(intent != null) {
+            if (intent.hasExtra("ingredientList")) {
+                mIngredientListProvided = true;
+                mIngredientList = intent.getStringExtra("ingredientList");
+            }
+        }
+
         /*Get Recipes from Yummly API*/
         new HttpGetRecipesTask().execute();
 
@@ -156,32 +169,64 @@ public class RecipesActivity extends Activity {
             mProgressBar.setVisibility(View.VISIBLE);
         }
 
+        private String buildURLExcludes(boolean ingredientListProvided, String ingredientList) {
+            StringBuilder excludes = new StringBuilder();
+
+            if(!ingredientListProvided) {
+                try {
+
+                /*Get ingredients for user_ingredient_file.JSON*/
+                    JSONArray userIngredients = new JSONArray(loadUserIngredientsJSONFromAsset());
+                    for (int i = 0; i < userIngredients.length(); i++) {
+                        JSONObject ingredient = userIngredients.getJSONObject(i);
+                        String searchIngredientName = ingredient.getString("searchValue");
+                        excludes.append("&excludedIngredient[]=");
+                        //Encode value
+                        excludes.append(searchIngredientName.replaceAll(" ", "%20"));
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                for(String ingredient : ingredientList.split("\\r?\\n")) {
+                    excludes.append("&excludedIngredient[]=");
+                    excludes.append(ingredient.replaceAll(" ", "%20"));
+                }
+
+            }
+            return excludes.toString();
+        }
+
         @Override
         protected List<RecipeListObject> doInBackground(Void... params) {
+            /*TODO: Remove Try Catch block. Not need anymore*/
             try {
                 /*Get ingredients for user_ingredient_file.JSON*/
-                JSONArray userIngredients = new JSONArray(loadUserIngredientsJSONFromAsset());
+                /*JSONArray userIngredients = new JSONArray(loadUserIngredientsJSONFromAsset());*/
                 /*Construct GET URL*/
                 StringBuilder urlWithParameters = new StringBuilder(BASE_URL);
 
-                for (int i = 0; i < userIngredients.length(); i++) {
+              /*  for (int i = 0; i < userIngredients.length(); i++) {
                     JSONObject ingredient = userIngredients.getJSONObject(i);
                     String searchIngredientName = ingredient.getString("searchValue");
                     urlWithParameters.append("&excludedIngredient[]=");
                     //Encode value
                     urlWithParameters.append(searchIngredientName.replaceAll(" ", "%20"));
-                }
+                }*/
+                /*TODO append URLWIthParameters*/
+
+                urlWithParameters.append(buildURLExcludes(mIngredientListProvided, mIngredientList));
                 urlWithParameters.append("&start=" + paginationFrom);
                 urlWithParameters.append("&maxResult=" + MAX_RESULT);
                 urlWithParameters.append("&requirePictures=true");
 
                 return downloadUrl(urlWithParameters.toString());
 
-            } catch (JSONException e) {
+            } catch (IOException e) {
                 Log.i(DEBUG_TAG, "Could not load user_ingredient_file.JSON");
                 e.printStackTrace();
                 return null;
-            } catch (IOException e) {
+            } catch (Exception e) {
                 Log.i(DEBUG_TAG, "Unable to retrieve web page. URL may be invalid.");
                 e.printStackTrace();
                 return null;
