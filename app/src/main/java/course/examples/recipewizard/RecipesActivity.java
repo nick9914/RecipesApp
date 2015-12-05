@@ -47,6 +47,7 @@ public class RecipesActivity extends Activity {
     private ProgressBar mProgressBar;
     private String mIngredientList;
     private boolean mIngredientListProvided;
+    private String mIngredientListIncludes;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,6 +97,7 @@ public class RecipesActivity extends Activity {
             if (intent.hasExtra("ingredientList")) {
                 mIngredientListProvided = true;
                 mIngredientList = intent.getStringExtra("ingredientList");
+                mIngredientListIncludes = intent.getStringExtra("ingredientListIncludes");
             }
         }
 
@@ -197,25 +199,29 @@ public class RecipesActivity extends Activity {
             return excludes.toString();
         }
 
+        private String buildURLIncludes(boolean ingredientListProvided, String ingredientListIncludes) {
+            StringBuilder includes = new StringBuilder();
+            if(!ingredientListProvided) {
+                //No ingredients, thus no includes
+                return "";
+            } else {
+                for(String ingredient : ingredientListIncludes.split("\\r?\\n")) {
+                    includes.append("&allowedIngredient[]=");
+                    includes.append(ingredient.replaceAll(" ", "%20"));
+                }
+                return includes.toString();
+            }
+        }
+
         @Override
         protected List<RecipeListObject> doInBackground(Void... params) {
             /*TODO: Remove Try Catch block. Not need anymore*/
             try {
-                /*Get ingredients for user_ingredient_file.JSON*/
-                /*JSONArray userIngredients = new JSONArray(loadUserIngredientsJSONFromAsset());*/
                 /*Construct GET URL*/
                 StringBuilder urlWithParameters = new StringBuilder(BASE_URL);
 
-              /*  for (int i = 0; i < userIngredients.length(); i++) {
-                    JSONObject ingredient = userIngredients.getJSONObject(i);
-                    String searchIngredientName = ingredient.getString("searchValue");
-                    urlWithParameters.append("&excludedIngredient[]=");
-                    //Encode value
-                    urlWithParameters.append(searchIngredientName.replaceAll(" ", "%20"));
-                }*/
-                /*TODO append URLWIthParameters*/
-
                 urlWithParameters.append(buildURLExcludes(mIngredientListProvided, mIngredientList));
+                urlWithParameters.append(buildURLIncludes(mIngredientListProvided, mIngredientListIncludes));
                 urlWithParameters.append("&start=" + paginationFrom);
                 urlWithParameters.append("&maxResult=" + MAX_RESULT);
                 urlWithParameters.append("&requirePictures=true");
@@ -232,7 +238,6 @@ public class RecipesActivity extends Activity {
                 return null;
 
             }
-
         }
 
         @Override

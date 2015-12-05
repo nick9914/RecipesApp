@@ -166,7 +166,9 @@ public class IngredientsActivity extends AppCompatActivity {
             public void onClick(View v) {
                 //Remove all the user input from the ingredients search values
                 ArrayList<String> retArrList = allIngredientsSearchValues;
+                String retStringIncludes = "";
                 for (String s : mUserIngredients) {
+                    retStringIncludes += s + "\n";
                     retArrList.remove(s);
                 }
 
@@ -178,6 +180,7 @@ public class IngredientsActivity extends AppCompatActivity {
 
                 //Package the string in an intent and return it
                 Intent i = new Intent(IngredientsActivity.this, RecipesActivity.class);
+                i.putExtra("ingredientListIncludes", retStringIncludes);
                 i.putExtra("ingredientList", retString);
                 setResult(144, i);
                 startActivity(i);
