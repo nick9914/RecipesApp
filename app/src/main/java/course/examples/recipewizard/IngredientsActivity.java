@@ -28,29 +28,40 @@ public class IngredientsActivity extends AppCompatActivity {
     ArrayList<String> mUserIngredients = new ArrayList<>();
     ArrayList<String> allIngredientsSearchValues;
     AutoCompleteTextView userInput;
+    ArrayList<String> restoreSearchValues;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ingredients);
 
+        userInput = (AutoCompleteTextView) findViewById(R.id.userInput);
+
         if (savedInstanceState != null) {
-            ArrayList<String> tmp = savedInstanceState.getStringArrayList("userIngredients");
-            if (tmp != null) {
-                mUserIngredients = tmp;
+            ArrayList<String> restoreUserIngredients = savedInstanceState.getStringArrayList("userIngredients");
+            restoreSearchValues = savedInstanceState.getStringArrayList("searchValues");
+            String restoreUserInput = savedInstanceState.getString("userInput");
+            if (restoreUserIngredients != null) {
+                mUserIngredients = restoreUserIngredients;
+            }
+
+            if (restoreUserInput != null) {
+                userInput.setText(restoreUserInput);
             }
         }
 
-
         //Load the User Ingredients file
-        try {
-            allIngredientsSearchValues = readJSON();
-        } catch (IOException e) {
-            e.printStackTrace();
+        if (restoreSearchValues != null) {
+            allIngredientsSearchValues = restoreSearchValues;
+        } else {
+            try {
+                allIngredientsSearchValues = readJSON();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
         //Load the user input and list view output
-        userInput = (AutoCompleteTextView) findViewById(R.id.userInput);
         m_adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, mUserIngredients);
         ListView ingredientList = (ListView) findViewById(R.id.ingredientList);
         ingredientList.setAdapter(m_adapter);
@@ -240,6 +251,8 @@ public class IngredientsActivity extends AppCompatActivity {
         super.onSaveInstanceState(savedState);
 
         savedState.putStringArrayList("userIngredients", mUserIngredients);
+        savedState.putStringArrayList("searchValues", allIngredientsSearchValues);
+        savedState.putString("userInput", userInput.getText().toString());
     }
 
 }
