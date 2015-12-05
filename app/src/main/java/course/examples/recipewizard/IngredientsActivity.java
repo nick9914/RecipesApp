@@ -1,7 +1,11 @@
 package course.examples.recipewizard;
 
 import android.content.Intent;
+import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.util.JsonReader;
 import android.util.Log;
@@ -11,15 +15,26 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 import java.util.Arrays;
 
 import android.view.View;
 import android.widget.ListView;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import course.examples.recipewizard.OCR_Helper_Classes.MultipartUtility;
 
 
 public class IngredientsActivity extends AppCompatActivity {
@@ -29,6 +44,13 @@ public class IngredientsActivity extends AppCompatActivity {
     ArrayList<String> mUserIngredients = new ArrayList<>();
     ArrayList<String> allIngredientsSearchValues;
     AutoCompleteTextView userInput;
+    /*For OCR functionality*/
+    public static final int MEDIA_TYPE_IMAGE = 1;
+    private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 100;
+    private Uri fileUri;
+    private String mParsedText;
+    private List<String> mParsedResults;
+    private ProgressBar mProgressBar;
     ArrayList<String> restoreSearchValues;
     ArrayList<String> restoreUserIngredients;
 
@@ -162,6 +184,22 @@ public class IngredientsActivity extends AppCompatActivity {
             }
         });
 
+        Button takePictureOfReceipt = (Button) findViewById(R.id.pictureOfReceipt);
+        takePictureOfReceipt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // create Intent to take a picture and return control to the calling application
+                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                fileUri = getOutputMediaFileUri(MEDIA_TYPE_IMAGE); // create a file to save the image
+                intent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri); // set the image file name
+                startActivityForResult(intent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
+            }
+        });
+
+        mProgressBar = (ProgressBar) findViewById(R.id.progressBarIngredients);
+        mProgressBar.setVisibility(View.INVISIBLE);
+        mParsedResults = new ArrayList<>();
+
     }
 
 
@@ -266,6 +304,133 @@ public class IngredientsActivity extends AppCompatActivity {
         }
         reader.endObject();
         return retValue;
+    }
+
+    /*---------------------------------------------------------------------------------*/
+
+    /** Create a file Uri for saving an image or video */
+    private Uri getOutputMediaFileUri(int type){
+        return Uri.fromFile(getOutputMediaFile(type));
+    }
+
+    /** Create a File for saving an image or video */
+    private File getOutputMediaFile(int type){
+        // To be safe, you should check that the SDCard is mounted
+        // using Environment.getExternalStorageState() before doing this.
+
+        /*Context.getExternalFilesDir(Environment.DIRECTORY_PICTURES) */
+
+        File mediaStorageDir = new File(getApplicationContext().getExternalFilesDir(
+                Environment.DIRECTORY_PICTURES), "MyCameraApp");
+        // This location works best if you want the created images to be shared
+        // between applications and persist after your app has been uninstalled.
+
+        // Create the storage directory if it does not exist
+        if (! mediaStorageDir.exists()){
+            if (! mediaStorageDir.mkdirs()){
+                Log.d("MyCameraApp", "failed to create directory");
+                return null;
+            }
+        }
+
+        // Create a media file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        File mediaFile;
+        if (type == MEDIA_TYPE_IMAGE){
+            mediaFile = new File(mediaStorageDir.getPath() + File.separator +
+                    "IMG_"+ timeStamp + ".jpg");
+        } else {
+            return null;
+        }
+
+        return mediaFile;
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
+            if (resultCode == RESULT_OK) {
+                // Image captured and saved to fileUri specified in the Intent
+                new HttpTask().execute();
+
+            } else if (resultCode == RESULT_CANCELED) {
+                // User cancelled the image capture
+            } else {
+                // Image capture failed, advise user
+            }
+        }
+    }
+
+    class HttpTask extends AsyncTask<Void, Void, String> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            mProgressBar.setVisibility(View.VISIBLE);
+        }
+
+        @Override
+        protected String doInBackground(Void... params) {
+            String charset = "UTF-8";
+            String requestURL = "https://ocr.a9t9.com/api/Parse/Image";
+
+            /*for testing purposes get uri from test picture.*/
+            /*if(fileUri == null) {
+                fileUri = resIdToUri(getApplicationContext(), R.raw.recipts_grocery);
+            }*/
+
+
+            try {
+                MultipartUtility multipart = new MultipartUtility(requestURL, charset);
+                multipart.addFormField("apikey", "helloworld");
+                multipart.addFormField("language", "eng");
+                multipart.addFilePart("file", new File(fileUri.getPath()));
+                List<String> response = multipart.finish(); // response from server.
+                JSONObject jsonObject = new JSONObject(response.get(0));
+                JSONArray parsedResultsJsonArray = (JSONArray) jsonObject.get("ParsedResults");
+                JSONObject innerJsonObject = parsedResultsJsonArray.getJSONObject(0);
+                String parsedText = (String) innerJsonObject.get("ParsedText");
+
+                return parsedText;
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return "error";
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            mParsedText = s;
+
+            //Find matched ingredients.
+            for(String ingredient : mParsedText.split("\\s+")) {
+                if(allIngredientsSearchValues.contains(ingredient)){
+                    mParsedResults.add(ingredient.toLowerCase());
+                }
+            }
+            for(String ingredient : mParsedResults){
+                addIngredientsHelper(ingredient);
+            }
+
+            /*TODO: Delete Temporary picture*/
+            /*getContentResolver().delete(fileUri, null, null);*/
+
+            mProgressBar.setVisibility(View.INVISIBLE);
+            String ingredientsRecognized = "" + mParsedResults.size() + " Ingredients Recognized";
+            showToast(ingredientsRecognized);
+            addRecognizedIngredients(mParsedResults);
+        }
+    }
+
+    private void addRecognizedIngredients(List<String> recognizedIngredients) {
+        for(String ingr : recognizedIngredients) {
+            addIngredientsHelper(ingr.trim());
+        }
+    }
+
+    private void showToast(String input) {
+        Toast.makeText(getApplicationContext(), input, Toast.LENGTH_SHORT).show();
     }
 
 

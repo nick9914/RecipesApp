@@ -50,7 +50,6 @@ public class RecipesActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         /*Initialize global variables and listners*/
         super.onCreate(savedInstanceState);
-        /*TODO change this when merging*/
         setContentView(R.layout.recipes_grid_view_layout);
         paginationFrom = 0;
         mGridview = (GridView) findViewById(R.id.gridview);
@@ -84,7 +83,6 @@ public class RecipesActivity extends Activity {
 
         /*Check Network Connection*/
         if (!checkNetworkConnection()) {
-            /*TODO: Go back to previous activity*/
             Toast.makeText(RecipesActivity.this, "No internet Connection", Toast.LENGTH_SHORT).show();
             finish();
         }
@@ -336,5 +334,3 @@ public class RecipesActivity extends Activity {
     }
 
 }
-
-/*TODO: Add support for pagination. */

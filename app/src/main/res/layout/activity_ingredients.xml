@@ -16,6 +16,14 @@
         android:id="@+id/ingredientsPrompt"
         android:layout_weight="0.03" />
 
+    <ProgressBar
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/progressBarIngredients"
+        android:layout_gravity="center_horizontal"
+        android:layout_weight="0.03" />
+
     <AutoCompleteTextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -45,6 +53,13 @@
             android:layout_height="wrap_content"
             android:text="Done"
             android:id="@+id/returnIngredients"
+            />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Take Picture"
+            android:id="@+id/pictureOfReceipt"
             />
 
     </LinearLayout>
