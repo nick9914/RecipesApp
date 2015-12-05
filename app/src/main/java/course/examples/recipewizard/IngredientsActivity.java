@@ -34,6 +34,14 @@ public class IngredientsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ingredients);
 
+        if (savedInstanceState != null) {
+            ArrayList<String> tmp = savedInstanceState.getStringArrayList("userIngredients");
+            if (tmp != null) {
+                mUserIngredients = tmp;
+            }
+        }
+
+
         //Load the User Ingredients file
         try {
             allIngredientsSearchValues = readJSON();
@@ -43,8 +51,8 @@ public class IngredientsActivity extends AppCompatActivity {
 
         //Load the user input and list view output
         userInput = (AutoCompleteTextView) findViewById(R.id.userInput);
-        ListView ingredientList = (ListView) findViewById(R.id.ingredientList);
         m_adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, mUserIngredients);
+        ListView ingredientList = (ListView) findViewById(R.id.ingredientList);
         ingredientList.setAdapter(m_adapter);
 
         //Set the auto complete suggestions
@@ -225,6 +233,13 @@ public class IngredientsActivity extends AppCompatActivity {
         }
         reader.endObject();
         return retValue;
+    }
+
+    public void onSaveInstanceState(Bundle savedState) {
+
+        super.onSaveInstanceState(savedState);
+
+        savedState.putStringArrayList("userIngredients", mUserIngredients);
     }
 
 }
