@@ -68,15 +68,15 @@ public class IngredientsActivity extends AppCompatActivity {
         //that has been pushed back into the activity via a string in an intent
         //that has ingredients separated by newline characters
         Intent intent = getIntent();
-        String foo = intent.getStringExtra("ingredientsList");
-        if (foo != null) {
-            ArrayList<String> restore = allIngredientsSearchValues;
-            ArrayList<String> previousList = new ArrayList<>(Arrays.asList(foo.split("\n")));
-            for (String s : previousList) {
-                    if ((allIngredientsSearchValues.contains(s))) {
-                        restore.remove(s);
-                    }
+        String restoreString = intent.getStringExtra("ingredientsList");
+        if (restoreString != null) {
+            ArrayList<String> previousList = new ArrayList<>(Arrays.asList(restoreString.split("\n")));
+            ArrayList<String> restore = new ArrayList<>();
+            for (String s : allIngredientsSearchValues) {
+                if (!(previousList.contains(s))) {
+                    restore.add(s);
                 }
+            }
             mUserIngredients = restore;
         }
 
