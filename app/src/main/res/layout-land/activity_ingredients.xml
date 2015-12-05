@@ -3,12 +3,15 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:weightSum="1"
+    android:padding="10dp"
+    android:background="#f0eee5"
     android:configChanges="keyboardHidden|orientation">
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="#e16120"
         android:text="Input Ingredients:"
         android:id="@+id/ingredientsPrompt"
         android:layout_weight="0.03" />
