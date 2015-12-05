@@ -30,6 +30,7 @@ public class IngredientsActivity extends AppCompatActivity {
     ArrayList<String> allIngredientsSearchValues;
     AutoCompleteTextView userInput;
     ArrayList<String> restoreSearchValues;
+    ArrayList<String> restoreUserIngredients;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,10 +40,12 @@ public class IngredientsActivity extends AppCompatActivity {
         //Load the user input field first so it can be restored if applicable
         userInput = (AutoCompleteTextView) findViewById(R.id.userInput);
 
+        //Get the resources to reload from an orientation change if they exist
         if (savedInstanceState != null) {
-            ArrayList<String> restoreUserIngredients = savedInstanceState.getStringArrayList("userIngredients");
+            restoreUserIngredients = savedInstanceState.getStringArrayList("userIngredients");
             restoreSearchValues = savedInstanceState.getStringArrayList("searchValues");
             String restoreUserInput = savedInstanceState.getString("userInput");
+
             if (restoreUserIngredients != null) {
                 mUserIngredients = restoreUserIngredients;
             }
@@ -77,7 +80,16 @@ public class IngredientsActivity extends AppCompatActivity {
                     restore.add(s);
                 }
             }
-            mUserIngredients = restore;
+
+            //Restore the previous list if applicable
+            if (restoreUserIngredients == null) {
+                mUserIngredients = restore;
+            }
+        }
+
+        //Restore the user input on orientation change if applicable
+        if (restoreUserIngredients != null) {
+            mUserIngredients = restoreUserIngredients;
         }
 
         //Load the list view output
@@ -125,26 +137,11 @@ public class IngredientsActivity extends AppCompatActivity {
             }
         });
 
+        //Button to return the ingredients to the calling activity
         Button returnIngredients = (Button) findViewById(R.id.returnIngredients);
         returnIngredients.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //Attempt to pass the array list back as a parcel
-                //failure
-                /*
-                IngredientsParcel ip = new IngredientsParcel();
-                ip.setmData(mUserIngredients);
-
-                Bundle retBundle = new Bundle();
-                retBundle.putParcelable("claw", ip);
-
-                Intent i = new Intent();
-                i.putExtras(retBundle);
-
-                setResult(144, i);
-                finish();
-                */
-
                 //Remove all the user input from the ingredients search values
                 ArrayList<String> retArrList = allIngredientsSearchValues;
                 for (String s : mUserIngredients) {
@@ -166,6 +163,8 @@ public class IngredientsActivity extends AppCompatActivity {
         });
 
     }
+
+
     //Add the individual ingredients into the list and update the list accordingly
     private void addIngredientsHelper(String in) {
         String sanitized_input;
@@ -182,6 +181,7 @@ public class IngredientsActivity extends AppCompatActivity {
         }
     }
 
+
     //Remove the individual ingredients from the list and update the list accordingly
     private void removeIngredientsHelper(String in) {
         String sanitized_input;
@@ -196,12 +196,14 @@ public class IngredientsActivity extends AppCompatActivity {
         }
     }
 
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_ingredients, menu);
         return true;
     }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -222,7 +224,7 @@ public class IngredientsActivity extends AppCompatActivity {
     }
 
 
-    //Read the user ingredients JSON file and load in the search values
+    //The following three methods read the user ingredients JSON file and parse the search values
     public ArrayList<String> readJSON() throws IOException {
         InputStream is = getAssets().open("user_ingredient_file.JSON");
         JsonReader reader = new JsonReader(new InputStreamReader(is, "UTF-8"));
@@ -237,6 +239,7 @@ public class IngredientsActivity extends AppCompatActivity {
         return null;
     }
 
+
     public ArrayList<String> readIngredientsArray(JsonReader reader) throws IOException {
         ArrayList<String> ingredients = new ArrayList();
 
@@ -247,6 +250,7 @@ public class IngredientsActivity extends AppCompatActivity {
         reader.endArray();
         return ingredients;
     }
+
 
     public String readIngredients(JsonReader reader) throws IOException {
         String retValue = null;
@@ -263,6 +267,7 @@ public class IngredientsActivity extends AppCompatActivity {
         reader.endObject();
         return retValue;
     }
+
 
     //Save the state of the app so it can be restore on rotation
     public void onSaveInstanceState(Bundle savedState) {
