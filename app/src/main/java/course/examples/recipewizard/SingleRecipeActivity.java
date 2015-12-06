@@ -9,6 +9,8 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.Html;
+import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
@@ -172,19 +174,19 @@ public class SingleRecipeActivity extends Activity  {
                 logString();
 
                 JSONObject mObject = stringToJSON(s);
-                if (mObject==null){
+                if (mObject == null) {
                     onBackPressed();
                 }
 
                 //get image url from json
                 JSONObject imageObject = getImageObject(mObject);
-                if (imageObject==null){
+                if (imageObject == null) {
                     setDefaultImage();
-                }else {
+                } else {
                     String bitmapUrl = getImageString(imageObject);
                     if (bitmapUrl == null) {
                         setDefaultImage();
-                    }else {
+                    } else {
 
                         Log.i("SingleRecipe", bitmapUrl);
                         String[] pass = new String[1];
@@ -199,15 +201,38 @@ public class SingleRecipeActivity extends Activity  {
                 //get name from the json object
                 //get ingredient lines from the json object
                 //get energy and serves from the ingredients
-                SingleRecipeObject recipeObject= new SingleRecipeObject(mObject);
+                SingleRecipeObject recipeObject = new SingleRecipeObject(mObject);
                 //set title
-                TextView titleView = (TextView)findViewById(R.id.recipe_name);
+                TextView titleView = (TextView) findViewById(R.id.recipe_name);
                 titleView.setText(recipeObject.name);
 
                 /*Log.i("SingleRecipe", "serves: " + recipeObject.serves + " energy: " + recipeObject.energy
                         + " fat: " + recipeObject.fat + " protein: " + recipeObject.protein +
                         " carb: " + recipeObject.carb);
 */
+                //adding webpage and ingredients list
+                TextView ingredients = (TextView) findViewById(R.id.ingredients_text);
+                if (recipeObject.ingredients != null){
+                    String temp = "Ingredients: ";
+
+
+                    for (String str : recipeObject.ingredients){
+                        temp += ("\n \u2022" + str );
+                    }
+
+                    ingredients.setText(temp);
+                }else{
+                    ingredients.setText("Ingredients: Not Available");
+                }
+
+                TextView webpage = (TextView) findViewById(R.id.webpage);
+                if (recipeObject.webpage != null){
+                    webpage.setText(Html.fromHtml("<a href='"+recipeObject.webpage +"'>Directions Webpage</a>"));
+                    webpage.setMovementMethod(LinkMovementMethod.getInstance());
+                }else{
+                    webpage.setText("Directions not available for this recipe");
+                }
+
                 TextView serve = (TextView)findViewById(R.id.serves_data);
                 TextView energy = (TextView)findViewById(R.id.energy_data);
                 TextView fat = (TextView)findViewById(R.id.fat_data);
@@ -359,6 +384,7 @@ public class SingleRecipeActivity extends Activity  {
         protected int serves;
         protected float carb,fat,protein;
         protected JSONArray nutritions;
+        protected String webpage;
 
 
         SingleRecipeObject(JSONObject mObject){
@@ -366,6 +392,14 @@ public class SingleRecipeActivity extends Activity  {
             //energy = -1;
             //name = null;
             //serves = -1;
+
+            try{
+                webpage = mObject.getJSONObject("source").getString("sourceRecipeUrl");
+                //Log.i("SingleRecipe",name);
+            }catch (Exception e){
+                e.printStackTrace();
+                webpage = null;
+            }
 
             //get name
             try{
