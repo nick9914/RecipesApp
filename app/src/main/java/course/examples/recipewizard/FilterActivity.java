@@ -582,7 +582,7 @@ public class FilterActivity extends Activity {
                 //make intent to return
                 Intent intent = new Intent();
                 // return selections based on database fields
-                intent.putExtra("filter",str.toString());
+                intent.putExtra("filter",str.toString().replaceAll(" ", "+"));
                 setResult(RESULT_OK , intent);
                 finish();
 

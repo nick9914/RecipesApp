@@ -233,13 +233,16 @@ public class RecipesActivity extends Activity {
                 urlWithParameters.append("&maxResult=" + MAX_RESULT);
                 urlWithParameters.append("&requirePictures=true");
 
-                //Log.i(DEBUG_TAG, "appending filter string to query: " + mFilterString);
+
                 // added for filter activity
                 if(mFilterString!=null) {
 
                     Log.i(DEBUG_TAG, "appending filter string to query: " + mFilterString);
                     urlWithParameters.append(mFilterString);
                 }
+
+                //debug
+                //Log.i(DEBUG_TAG, "querystring : " + mFilterString);
 
                 return downloadUrl(urlWithParameters.toString());
 
