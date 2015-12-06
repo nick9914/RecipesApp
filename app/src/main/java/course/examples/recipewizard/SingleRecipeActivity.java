@@ -12,6 +12,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,7 +25,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.lang.reflect.Array;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
@@ -250,7 +251,12 @@ public class SingleRecipeActivity extends Activity  {
                 *
                 *
                 * */
-                //ingredientsAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,recipeObject.ingredients);
+                LinearLayout ingredientsLinearLayout = (LinearLayout) findViewById(R.id.ingredientsLinearLayout);
+                for (int i = 0; i<recipeObject.ingredients.size();i++){
+                    TextView textView = new TextView(SingleRecipeActivity.this);
+                    textView.setText(recipeObject.ingredients.get(i));
+                    ingredientsLinearLayout.addView(textView);
+                }
 
             }
             else{

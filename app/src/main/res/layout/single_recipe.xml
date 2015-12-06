@@ -35,14 +35,17 @@
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:layout_alignParentStart="true"
-        android:id="@+id/linearLayout"></LinearLayout>
+        android:id="@+id/ingredientsLinearLayout"
+        android:layout_alignParentEnd="true"
+        android:layout_below="@+id/ingredients_text"
+        android:paddingLeft="20dp"></LinearLayout>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Nutrition Facts:"
         android:id="@+id/nutrition_facts_linearLayout"
-        android:layout_below="@+id/linearLayout"
+        android:layout_below="@+id/ingredientsLinearLayout"
         android:layout_alignParentStart="true" />
 
     <TextView
@@ -95,7 +98,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/serves_data"
         android:layout_alignTop="@+id/serves_text"
-        android:layout_alignEnd="@+id/linearLayout" />
+        android:layout_alignEnd="@+id/ingredientsLinearLayout" />
 
     <TextView
         android:layout_width="wrap_content"
