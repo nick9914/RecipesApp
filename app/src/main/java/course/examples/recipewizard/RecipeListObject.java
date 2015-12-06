@@ -9,20 +9,20 @@ public class RecipeListObject {
     public static final int MY_HEIGHT = 180;
     private Bitmap recipePicture;
     private String recipeLabel;
-    private String rating;
+    private String id;
     private String pictureURL;
 
     public RecipeListObject() {
         this.recipePicture = null;
         this.recipeLabel = null;
-        this.rating = null;
+        this.id = null;
         this.pictureURL = null;
     }
 
-    public RecipeListObject(Bitmap recipePicture, String recipeLabel, String rating) {
+    public RecipeListObject(Bitmap recipePicture, String recipeLabel, String id) {
         this.recipePicture = recipePicture;
         this.recipeLabel = recipeLabel;
-        this.rating = rating;
+        this.id = id;
     }
 
     public Bitmap getRecipePicture() {
@@ -33,8 +33,8 @@ public class RecipeListObject {
         return recipeLabel;
     }
 
-    public String getRecipeDescription() {
-        return rating;
+    public String getRecipeId() {
+        return id;
     }
 
     public void setRecipePicture(Bitmap recipePicture) {
@@ -48,13 +48,13 @@ public class RecipeListObject {
 
     public Intent packToIntent(Intent i) {
         i.putExtra("recipePicture", recipePicture);
-        i.putExtra("recipeLabel", recipeLabel);
+        i.putExtra("recipeId", id);
 
         return i;
     }
 
-    public void setRating(String rating) {
-        this.rating = rating;
+    public void setRecipeId(String id) {
+        this.id = id;
     }
 
     public void setPictureURL(String pictureURL) {

@@ -289,7 +289,7 @@ public class RecipesActivity extends Activity {
                 for (int i = 0; i < matchesArray.length(); i++) {
                     JSONObject JSONRecipeObject = matchesArray.getJSONObject(i);
                     RecipeListObject recipeListObj = new RecipeListObject();
-                    recipeListObj.setRating(JSONRecipeObject.getString("rating"));
+                    recipeListObj.setRecipeId(JSONRecipeObject.getString("id"));
                     recipeListObj.setRecipeLabel(JSONRecipeObject.getString("recipeName"));
                     JSONObject imageUrlJsonObj = JSONRecipeObject.getJSONObject("imageUrlsBySize");
                     recipeListObj.setPictureURL(imageUrlJsonObj.getString("90"));
