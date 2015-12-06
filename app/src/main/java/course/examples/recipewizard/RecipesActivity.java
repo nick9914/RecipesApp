@@ -46,6 +46,7 @@ public class RecipesActivity extends Activity {
     private RecipeListAdapter mAdapter;
     private ProgressBar mProgressBar;
     private String mIngredientList;
+    private String mFilterString;
     private boolean mIngredientListProvided;
     private String mIngredientListIncludes;
 
@@ -63,6 +64,7 @@ public class RecipesActivity extends Activity {
         mProgressBar = (ProgressBar) findViewById(R.id.progressBar);
         mIngredientListProvided = false;
         mIngredientList = null;
+        mFilterString = null;
 
         mGridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -94,10 +96,15 @@ public class RecipesActivity extends Activity {
         /*Check if statrted from Ingredients Activity*/
         Intent intent = getIntent();
         if(intent != null) {
+            if (intent.hasExtra("filter")) {
+                mFilterString = intent.getStringExtra("filter");
+            }
             if (intent.hasExtra("ingredientList")) {
                 mIngredientListProvided = true;
                 mIngredientList = intent.getStringExtra("ingredientList");
                 mIngredientListIncludes = intent.getStringExtra("ingredientListIncludes");
+                Log.d("Debug", "The included ingredients is/are: " + mIngredientListIncludes);
+
             }
         }
 
@@ -226,6 +233,17 @@ public class RecipesActivity extends Activity {
                 urlWithParameters.append("&maxResult=" + MAX_RESULT);
                 urlWithParameters.append("&requirePictures=true");
 
+
+                // added for filter activity
+                if(mFilterString!=null) {
+
+                    Log.i(DEBUG_TAG, "appending filter string to query: " + mFilterString);
+                    urlWithParameters.append(mFilterString);
+                }
+
+                //debug
+                //Log.i(DEBUG_TAG, "querystring : " + mFilterString);
+
                 return downloadUrl(urlWithParameters.toString());
 
             } catch (IOException e) {
@@ -246,10 +264,13 @@ public class RecipesActivity extends Activity {
             if(!mPaginationListOfRecipes.isEmpty()) {
                 mPaginationListOfRecipes.clear();
             }
-            mPaginationListOfRecipes.addAll(recipeListObjects);
-            paginationFrom += MAX_RESULT;
-            /*Get images for recipe objects*/
-            getRecipeImages();
+            //test if statement because of crash with nullpointer exception recipeListObjects
+            if(recipeListObjects!= null) {
+                mPaginationListOfRecipes.addAll(recipeListObjects);
+                paginationFrom += MAX_RESULT;
+                /*Get images for recipe objects*/
+                getRecipeImages();
+            }
 
         }
 

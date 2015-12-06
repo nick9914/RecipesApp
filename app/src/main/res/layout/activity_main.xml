@@ -12,24 +12,24 @@
         android:layout_height="wrap_content"
         android:text="Add Ingredients"
         android:id="@+id/AddIngredients"
-        android:layout_above="@+id/addFilters"
+        android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true" />
 
-    <Button
+<!--    <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Search Recipes"
         android:id="@+id/findRecipes"
         android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true" />-->
 
-    <Button
+<!--    <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Add Filters"
         android:id="@+id/addFilters"
         android:layout_above="@+id/findRecipes"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true" />-->
 
 
 

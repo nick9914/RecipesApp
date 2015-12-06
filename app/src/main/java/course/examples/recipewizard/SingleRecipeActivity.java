@@ -2,6 +2,7 @@ package course.examples.recipewizard;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
@@ -9,6 +10,7 @@ import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -38,6 +40,7 @@ public class SingleRecipeActivity extends Activity  {
     private static String stringdata;
 
     ImageView recipe_picture;
+    ArrayAdapter<String> ingredientsAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,7 +48,15 @@ public class SingleRecipeActivity extends Activity  {
         setContentView(R.layout.single_recipe);
 
         /*set recipe code for test use*/
-        String recipeCode = "French-Onion-Soup-The-Pioneer-Woman-Cooks-_-Ree-Drummond-41364";
+        Intent i = getIntent();
+        String lableTest = i.getStringExtra("recipeId");
+        Log.i("SingleRecipe",lableTest);
+
+        String recipeCode;
+
+        recipeCode = lableTest;
+        //recipeCode = "French-Onion-Soup-The-Pioneer-Woman-Cooks-_-Ree-Drummond-41364";
+
         String[] pass = new String[1];
         pass[0] = recipeCode;
         /*
@@ -234,13 +245,12 @@ public class SingleRecipeActivity extends Activity  {
                 }*/
 
                 /*
-                * TODO: create an adapter for the listview of ingredients
                 *
                 *
                 *
                 *
                 * */
-
+                //ingredientsAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,recipeObject.ingredients);
 
             }
             else{
