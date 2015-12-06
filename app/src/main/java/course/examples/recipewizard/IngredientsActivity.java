@@ -81,16 +81,11 @@ public class IngredientsActivity extends AppCompatActivity {
         }
 
 
-        //Restore the search value list or load it from scratch
-        if (restoreSearchValues != null) {
-            allIngredientsSearchValues = restoreSearchValues;
-        } else {
             try {
                 allIngredientsSearchValues = readJSON();
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        }
 
         //This restore the user input list of ingredients based on a list
         //that has been pushed back into the activity via a string in an intent
@@ -168,7 +163,11 @@ public class IngredientsActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 //Remove all the user input from the ingredients search values
-                ArrayList<String> retArrList = allIngredientsSearchValues;
+                ArrayList<String> retArrList = new ArrayList<>();
+                for (String s : allIngredientsSearchValues) {
+                    retArrList.add(s);
+                }
+
                 String retStringIncludes = "";
                 for (String s : mUserIngredients) {
                     retStringIncludes += s + "\n";
@@ -180,6 +179,7 @@ public class IngredientsActivity extends AppCompatActivity {
                 for (String s : retArrList) {
                     retString += s + "\n";
                 }
+
 
                 //Package the string in an intent and return it
                 Intent i = new Intent(IngredientsActivity.this, RecipesActivity.class);
@@ -218,6 +218,8 @@ public class IngredientsActivity extends AppCompatActivity {
         String sanitized_input;
         if (null != in && in.length() > 0) {
             sanitized_input = in.toLowerCase();
+            Log.i("FOO", sanitized_input);
+            Log.i("FOO2", new Integer(allIngredientsSearchValues.size()).toString());
             if (mUserIngredients.contains(sanitized_input)) {
                 Toast.makeText(getApplicationContext(), "You have already entered this ingredient!", Toast.LENGTH_LONG).show();
             } else if (!(allIngredientsSearchValues.contains(sanitized_input))) {
@@ -324,8 +326,24 @@ public class IngredientsActivity extends AppCompatActivity {
         super.onSaveInstanceState(savedState);
 
         savedState.putStringArrayList("userIngredients", mUserIngredients);
-        savedState.putStringArrayList("searchValues", allIngredientsSearchValues);
+        //savedState.putStringArrayList("searchValues", allIngredientsSearchValues);
         savedState.putString("userInput", userInput.getText().toString());
+    }
+
+    public void onRestoreInstanceState (Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+
+        mUserIngredients = savedInstanceState.getStringArrayList("userIngredients");
+        //allIngredientsSearchValues = savedInstanceState.getStringArrayList("searchValues");
+        userInput.setText(savedInstanceState.getString("userInput"));
+    }
+
+    public void onPause() {
+        super.onPause();
+    }
+
+    public void onResume() {
+        super.onResume();
     }
 
     /*---------------------------------------------------------------------------------*/
@@ -466,21 +484,5 @@ public class IngredientsActivity extends AppCompatActivity {
 
     private void showToast(String input) {
         Toast.makeText(getApplicationContext(), input, Toast.LENGTH_SHORT).show();
-    }
-
-    public void onRestoreInstanceState (Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-
-        mUserIngredients = savedInstanceState.getStringArrayList("userIngredients");
-        allIngredientsSearchValues = savedInstanceState.getStringArrayList("searchValues");
-        userInput.setText(savedInstanceState.getString("userInput"));
-    }
-
-    public void onPause() {
-        super.onPause();
-    }
-
-    public void onResume() {
-        super.onResume();
     }
 }
