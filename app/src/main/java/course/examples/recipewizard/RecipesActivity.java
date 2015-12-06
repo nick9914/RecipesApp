@@ -103,6 +103,8 @@ public class RecipesActivity extends Activity {
                 mIngredientListProvided = true;
                 mIngredientList = intent.getStringExtra("ingredientList");
                 mIngredientListIncludes = intent.getStringExtra("ingredientListIncludes");
+                Log.d("Debug", "The included ingredients is/are: " + mIngredientListIncludes);
+
             }
         }
 
