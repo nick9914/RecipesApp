@@ -1,6 +1,7 @@
 package course.examples.recipewizard;
 
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -443,7 +444,7 @@ public class IngredientsActivity extends AppCompatActivity {
                 MultipartUtility multipart = new MultipartUtility(requestURL, charset);
                 multipart.addFormField("apikey", "helloworld");
                 multipart.addFormField("language", "eng");
-                multipart.addFilePart("file", new File(fileUri.getPath()));
+                multipart.addFilePart("file", new File(getPath(fileUri)));
                 List<String> response = multipart.finish(); // response from server.
                 JSONObject jsonObject = new JSONObject(response.get(0));
                 JSONArray parsedResultsJsonArray = (JSONArray) jsonObject.get("ParsedResults");
@@ -488,8 +489,18 @@ public class IngredientsActivity extends AppCompatActivity {
         }
     }
 
+    public String getPath(Uri uri) {
+        String[] projection = { MediaStore.Images.Media.DATA };
+        Cursor cursor = managedQuery(uri, projection, null, null, null);
+        startManagingCursor(cursor);
+        int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+        cursor.moveToFirst();
+        return cursor.getString(column_index);
+    }
+
 
     private void showToast(String input) {
         Toast.makeText(getApplicationContext(), input, Toast.LENGTH_SHORT).show();
     }
+
 }
