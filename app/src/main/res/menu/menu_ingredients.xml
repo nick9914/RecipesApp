@@ -3,6 +3,9 @@
       xmlns:tools="http://schemas.android.com/tools"
     tools:context="course.examples.recipewizard.IngredientsActivity">
 
+    <item android:id="@+id/filters"
+        android:title="Filter Recipes"/>
+
     <item android:id="@+id/clearList"
         android:title="Clear List"/>
 

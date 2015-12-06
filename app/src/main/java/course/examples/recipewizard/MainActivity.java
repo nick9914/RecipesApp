@@ -26,6 +26,8 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        //added filters in ingredient activity
+/*
         //Button to go into the add filters activity
         final Button addFilters = (Button) findViewById(R.id.addFilters);
         // Set an OnClickListener on this Button
@@ -41,8 +43,10 @@ public class MainActivity extends Activity {
 
             }
         });
+*/
 
-        //Button to go into the recipes activity which will actually search for recipes
+        //added recipe activity in ingredient activity
+/*        //Button to go into the recipes activity which will actually search for recipes
         final Button findRecipes = (Button) findViewById(R.id.findRecipes);
         // Set an OnClickListener on this Button
         // Called each time the user clicks the Button
@@ -55,7 +59,7 @@ public class MainActivity extends Activity {
 
 
             }
-        });
+        });*/
 
         //Button to launch the ingredients activity
         final Button addIngredients = (Button) findViewById(R.id.AddIngredients);

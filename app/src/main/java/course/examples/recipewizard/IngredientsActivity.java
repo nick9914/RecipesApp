@@ -47,12 +47,15 @@ public class IngredientsActivity extends AppCompatActivity {
     /*For OCR functionality*/
     public static final int MEDIA_TYPE_IMAGE = 1;
     private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 100;
+    private static final int FILTER_ACTIVITY_REQUEST_CODE = 837;
+
     private Uri fileUri;
     private String mParsedText;
     private List<String> mParsedResults;
     private ProgressBar mProgressBar;
     ArrayList<String> restoreSearchValues;
     ArrayList<String> restoreUserIngredients;
+    private String filterstring;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -180,6 +183,9 @@ public class IngredientsActivity extends AppCompatActivity {
 
                 //Package the string in an intent and return it
                 Intent i = new Intent(IngredientsActivity.this, RecipesActivity.class);
+                if(filterstring!=null) {
+                    i.putExtra("filter", filterstring);
+                }
                 i.putExtra("ingredientListIncludes", retStringIncludes);
                 i.putExtra("ingredientList", retString);
                 setResult(144, i);
@@ -204,6 +210,7 @@ public class IngredientsActivity extends AppCompatActivity {
         mParsedResults = new ArrayList<>();
 
     }
+
 
 
     //Add the individual ingredients into the list and update the list accordingly
@@ -259,6 +266,9 @@ public class IngredientsActivity extends AppCompatActivity {
             m_adapter.notifyDataSetChanged();
         } else if (id == R.id.clearInput) {
             userInput.setText("");
+        }else if (id == R.id.filters) {
+            Intent intent = new Intent(this, FilterActivity.class);
+            this.startActivityForResult(intent, FILTER_ACTIVITY_REQUEST_CODE);
         }
 
         return super.onOptionsItemSelected(item);
@@ -360,6 +370,18 @@ public class IngredientsActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+
+        if(requestCode==FILTER_ACTIVITY_REQUEST_CODE)
+        {
+            if (resultCode == RESULT_OK) {
+                filterstring = data.getStringExtra("filter");
+            }else if (resultCode == RESULT_CANCELED) {
+                // User cancelled the filter act
+            }
+        }
+
+
         if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
                 // Image captured and saved to fileUri specified in the Intent
