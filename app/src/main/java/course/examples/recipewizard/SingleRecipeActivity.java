@@ -440,6 +440,7 @@ public class SingleRecipeActivity extends Activity  {
             carb = -1;
             fat = -1;
             protein = -1;
+            energy = -1;
 
             if (nutritions!=null){
                 try{
