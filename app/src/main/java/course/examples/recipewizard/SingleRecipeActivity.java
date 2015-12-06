@@ -276,12 +276,12 @@ public class SingleRecipeActivity extends Activity  {
                 *
                 *
                 * */
-                LinearLayout ingredientsLinearLayout = (LinearLayout) findViewById(R.id.ingredientsLinearLayout);
+/*                LinearLayout ingredientsLinearLayout = (LinearLayout) findViewById(R.id.ingredientsLinearLayout);
                 for (int i = 0; i<recipeObject.ingredients.size();i++){
                     TextView textView = new TextView(SingleRecipeActivity.this);
                     textView.setText(recipeObject.ingredients.get(i));
                     ingredientsLinearLayout.addView(textView);
-                }
+                }*/
 
             }
             else{
