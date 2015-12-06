@@ -10,10 +10,11 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Add Ingredients"
+        android:text="Start New Search"
         android:id="@+id/AddIngredients"
+        android:layout_marginBottom="76dp"
         android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"/>
 
 <!--    <Button
         android:layout_width="wrap_content"
