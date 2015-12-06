@@ -11,6 +11,7 @@ import android.util.JsonReader;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
@@ -120,6 +121,13 @@ public class IngredientsActivity extends AppCompatActivity {
         m_adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, mUserIngredients);
         ListView ingredientList = (ListView) findViewById(R.id.ingredientList);
         ingredientList.setAdapter(m_adapter);
+        //Clicking an item sets the user input text to that item
+        ingredientList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+                String data = (String) arg0.getItemAtPosition(arg2);
+                userInput.setText(data);
+            }
+        });
 
         //Set the auto complete suggestions
         m_suggestions = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line,
@@ -212,10 +220,7 @@ public class IngredientsActivity extends AppCompatActivity {
         mProgressBar = (ProgressBar) findViewById(R.id.progressBarIngredients);
         mProgressBar.setVisibility(View.INVISIBLE);
         mParsedResults = new ArrayList<>();
-
-    }
-
-
+}
 
     //Add the individual ingredients into the list and update the list accordingly
     private void addIngredientsHelper(String in) {
