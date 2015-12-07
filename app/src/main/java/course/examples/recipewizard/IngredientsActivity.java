@@ -1,5 +1,6 @@
 package course.examples.recipewizard;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -206,7 +207,7 @@ public class IngredientsActivity extends AppCompatActivity {
             }
         });
 
-/*        Button takePictureOfReceipt = (Button) findViewById(R.id.pictureOfReceipt);
+        Button takePictureOfReceipt = (Button) findViewById(R.id.pictureOfReceipt);
         takePictureOfReceipt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -216,7 +217,7 @@ public class IngredientsActivity extends AppCompatActivity {
                 intent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri); // set the image file name
                 startActivityForResult(intent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
             }
-        });*/
+        });
 
         mProgressBar = (ProgressBar) findViewById(R.id.progressBarIngredients);
         mProgressBar.setVisibility(View.INVISIBLE);
@@ -368,8 +369,15 @@ public class IngredientsActivity extends AppCompatActivity {
 
         /*Context.getExternalFilesDir(Environment.DIRECTORY_PICTURES) */
 
-        File mediaStorageDir = new File(getApplicationContext().getExternalFilesDir(
+
+
+        File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(
                 Environment.DIRECTORY_PICTURES), "MyCameraApp");
+        // This location works best if you want the created images to be shared
+        // between applications and persist after your app has been uninstalled.
+
+        /*File mediaStorageDir = new File(getApplicationContext().getExternalFilesDir(
+                Environment.DIRECTORY_PICTURES), "MyCameraApp");*/
         // This location works best if you want the created images to be shared
         // between applications and persist after your app has been uninstalled.
 
@@ -390,23 +398,11 @@ public class IngredientsActivity extends AppCompatActivity {
         } else {
             return null;
         }
-
         return mediaFile;
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-
-
-        if(requestCode==FILTER_ACTIVITY_REQUEST_CODE)
-        {
-            if (resultCode == RESULT_OK) {
-                filterstring = data.getStringExtra("filter");
-            }else if (resultCode == RESULT_CANCELED) {
-                // User cancelled the filter act
-            }
-        }
-
 
         if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
@@ -419,6 +415,17 @@ public class IngredientsActivity extends AppCompatActivity {
                 // Image capture failed, advise user
             }
         }
+
+        if(requestCode==FILTER_ACTIVITY_REQUEST_CODE)
+        {
+            if (resultCode == RESULT_OK) {
+                filterstring = data.getStringExtra("filter");
+            }else if (resultCode == RESULT_CANCELED) {
+                // User cancelled the filter act
+            }
+        }
+
+
     }
 
     class HttpTask extends AsyncTask<Void, Void, String> {
@@ -432,7 +439,7 @@ public class IngredientsActivity extends AppCompatActivity {
         @Override
         protected String doInBackground(Void... params) {
             String charset = "UTF-8";
-            String requestURL = "https://ocr.a9t9.com/api/Parse/Image";
+            String requestURL = "https://ocr.space/api/Parse/Image";
 
             /*for testing purposes get uri from test picture.*/
             /*if(fileUri == null) {
@@ -444,7 +451,7 @@ public class IngredientsActivity extends AppCompatActivity {
                 MultipartUtility multipart = new MultipartUtility(requestURL, charset);
                 multipart.addFormField("apikey", "helloworld");
                 multipart.addFormField("language", "eng");
-                multipart.addFilePart("file", new File(getPath(fileUri)));
+                multipart.addFilePart("file", new File(getRealPathFromURI(fileUri)));
                 List<String> response = multipart.finish(); // response from server.
                 JSONObject jsonObject = new JSONObject(response.get(0));
                 JSONArray parsedResultsJsonArray = (JSONArray) jsonObject.get("ParsedResults");
@@ -489,13 +496,18 @@ public class IngredientsActivity extends AppCompatActivity {
         }
     }
 
-    public String getPath(Uri uri) {
-        String[] projection = { MediaStore.Images.Media.DATA };
-        Cursor cursor = managedQuery(uri, projection, null, null, null);
-        startManagingCursor(cursor);
-        int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-        cursor.moveToFirst();
-        return cursor.getString(column_index);
+    private String getRealPathFromURI(Uri contentURI) {
+        Cursor cursor = this.getContentResolver().query(contentURI, null, null, null, null);
+        if (cursor == null) { // Source is Dropbox or other similar local file
+            // path
+            return contentURI.getPath();
+        } else {
+            cursor.moveToFirst();
+            int idx = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
+            String path = cursor.getString(idx);
+            cursor.close();
+            return path;
+        }
     }
 
 
