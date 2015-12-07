@@ -42,13 +42,13 @@
             android:id="@+id/userInput"
             />
 
-        <Button
+<!--        <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Take Pic"
             android:id="@+id/pictureOfReceipt"
             android:textSize="12dp"
-            />
+            />-->
 
     </LinearLayout>
 
