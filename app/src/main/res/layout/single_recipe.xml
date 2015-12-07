@@ -57,7 +57,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Energy per serve:"
+            android:text="Energy per serving:"
             android:id="@+id/energy_text"
             android:paddingLeft="20dp"
             android:layout_below="@+id/serves_text"
@@ -66,7 +66,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Fat per serve:"
+            android:text="Fat per serving:"
             android:id="@+id/fat_text"
             android:paddingLeft="20dp"
             android:layout_below="@+id/energy_text"
@@ -75,7 +75,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Protein per serve:"
+            android:text="Protein per serving:"
             android:id="@+id/protein_text"
             android:paddingLeft="20dp"
             android:layout_below="@+id/fat_text"
@@ -84,7 +84,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Carbohydrate per serve:"
+            android:text="Carbohydrate per serving:"
             android:id="@+id/carb_text"
             android:paddingLeft="20dp"
             android:layout_below="@+id/protein_text"
