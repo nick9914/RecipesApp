@@ -207,7 +207,7 @@ public class IngredientsActivity extends AppCompatActivity {
             }
         });
 
-        Button takePictureOfReceipt = (Button) findViewById(R.id.pictureOfReceipt);
+        /*Button takePictureOfReceipt = (Button) findViewById(R.id.pictureOfReceipt);
         takePictureOfReceipt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -217,7 +217,7 @@ public class IngredientsActivity extends AppCompatActivity {
                 intent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri); // set the image file name
                 startActivityForResult(intent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
             }
-        });
+        });*/
 
         mProgressBar = (ProgressBar) findViewById(R.id.progressBarIngredients);
         mProgressBar.setVisibility(View.INVISIBLE);
