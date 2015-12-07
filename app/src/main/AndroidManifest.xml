@@ -27,6 +27,7 @@
             android:label="FilterActivity" />
         <activity
             android:name=".IngredientsActivity"
+            android:configChanges="orientation|screenSize"
             android:label="IngredientsActivity" />
         <activity
             android:name=".SingleRecipeActivity"

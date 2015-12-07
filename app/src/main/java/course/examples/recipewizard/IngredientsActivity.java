@@ -8,7 +8,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.support.v7.app.AppCompatActivity;
 import android.util.JsonReader;
 import android.util.Log;
 import android.view.Menu;
@@ -40,7 +39,7 @@ import org.json.JSONObject;
 import course.examples.recipewizard.OCR_Helper_Classes.MultipartUtility;
 
 
-public class IngredientsActivity extends AppCompatActivity {
+public class IngredientsActivity extends Activity {
 
     ArrayAdapter<String> m_adapter;
     ArrayAdapter<String> m_suggestions;
@@ -406,6 +405,11 @@ public class IngredientsActivity extends AppCompatActivity {
 
         if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
+                Log.d("MyCameraApp", "RESULT_OK and fileuri=null?"+(fileUri==null));
+                if(data!= null){
+                    fileUri = data.getData();
+                    Log.d("MyCameraApp", "RESULT_OK and tried fileUri = data.getData();  fileuri=null?"+(fileUri==null));
+                }
                 // Image captured and saved to fileUri specified in the Intent
                 new HttpTask().execute();
 
@@ -453,10 +457,13 @@ public class IngredientsActivity extends AppCompatActivity {
                 multipart.addFormField("language", "eng");
                 multipart.addFilePart("file", new File(getRealPathFromURI(fileUri)));
                 List<String> response = multipart.finish(); // response from server.
-                JSONObject jsonObject = new JSONObject(response.get(0));
+                String temp = response.get(0);
+                Log.d("MyCameraApp", "JSON String "+ temp);
+                JSONObject jsonObject = new JSONObject(temp);
                 JSONArray parsedResultsJsonArray = (JSONArray) jsonObject.get("ParsedResults");
                 JSONObject innerJsonObject = parsedResultsJsonArray.getJSONObject(0);
-                String parsedText = (String) innerJsonObject.get("ParsedText");
+                String parsedText = innerJsonObject.get("ParsedText").toString();
+                Log.d("MyCameraApp", " parsed list String "+ parsedText);
 
                 return parsedText;
 
@@ -471,12 +478,11 @@ public class IngredientsActivity extends AppCompatActivity {
 
             //Find matched ingredients.
             for(String ingredient : mParsedText.split("\\s+")) {
-                if(allIngredientsSearchValues.contains(ingredient)){
+                Log.d("Test str ingredient: ", ". " + ingredient + " .");
+                Log.d("Test str ingredient", " " +allIngredientsSearchValues.contains(ingredient.toLowerCase()));
+                if(allIngredientsSearchValues.contains(ingredient.toLowerCase())){
                     mParsedResults.add(ingredient.toLowerCase());
                 }
-            }
-            for(String ingredient : mParsedResults){
-                addIngredientsHelper(ingredient);
             }
 
             /*TODO: Delete Temporary picture*/
@@ -494,6 +500,7 @@ public class IngredientsActivity extends AppCompatActivity {
         for(String ingr : recognizedIngredients) {
             addIngredientsHelper(ingr.trim());
         }
+        mParsedResults.clear();
     }
 
     private String getRealPathFromURI(Uri contentURI) {
