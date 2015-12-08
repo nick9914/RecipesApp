@@ -8,6 +8,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.v7.app.AppCompatActivity;
 import android.util.JsonReader;
 import android.util.Log;
 import android.view.Menu;
@@ -39,7 +40,7 @@ import org.json.JSONObject;
 import course.examples.recipewizard.OCR_Helper_Classes.MultipartUtility;
 
 
-public class IngredientsActivity extends Activity {
+public class IngredientsActivity extends AppCompatActivity {
 
     ArrayAdapter<String> m_adapter;
     ArrayAdapter<String> m_suggestions;
