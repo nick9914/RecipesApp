@@ -478,12 +478,20 @@ public class IngredientsActivity extends AppCompatActivity {
             mParsedText = s;
 
             //Find matched ingredients.
+            String temp = "";
             for(String ingredient : mParsedText.split("\\s+")) {
-                Log.d("Test str ingredient: ", ". " + ingredient + " .");
-                Log.d("Test str ingredient", " " +allIngredientsSearchValues.contains(ingredient.toLowerCase()));
-                if(allIngredientsSearchValues.contains(ingredient.toLowerCase())){
-                    mParsedResults.add(ingredient.toLowerCase());
+                String word = ingredient.toLowerCase();
+                Log.d("Test str ingredient: ", "." + word + ".");
+                Log.d("Test str ingredient", " " +allIngredientsSearchValues.contains(word));
+                if(allIngredientsSearchValues.contains(word)){
+                    mParsedResults.add(word);
                 }
+                Log.d("Test 2word ingredient", "." + (word+" " + temp) + ".");
+                Log.d("Test 2word ingredient", " " +allIngredientsSearchValues.contains(temp+" " + word));
+                if(allIngredientsSearchValues.contains(temp+" " + word)){
+                    mParsedResults.add(temp+" " + word);
+                }
+                temp = ingredient.toLowerCase();
             }
 
             /*TODO: Delete Temporary picture*/
