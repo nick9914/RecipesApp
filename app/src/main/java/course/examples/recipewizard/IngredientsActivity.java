@@ -3,6 +3,7 @@ package course.examples.recipewizard;
 import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
+import android.hardware.Camera;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -51,6 +52,7 @@ public class IngredientsActivity extends AppCompatActivity {
     public static final int MEDIA_TYPE_IMAGE = 1;
     private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 100;
     private static final int FILTER_ACTIVITY_REQUEST_CODE = 837;
+    private static final int MAX_CAMERA_DIMENSION = 26000;
 
     private Uri fileUri;
     private String mParsedText;
@@ -211,6 +213,7 @@ public class IngredientsActivity extends AppCompatActivity {
         takePictureOfReceipt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //setCameraParameters();
                 // create Intent to take a picture and return control to the calling application
                 Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                 fileUri = getOutputMediaFileUri(MEDIA_TYPE_IMAGE); // create a file to save the image
@@ -222,7 +225,28 @@ public class IngredientsActivity extends AppCompatActivity {
         mProgressBar = (ProgressBar) findViewById(R.id.progressBarIngredients);
         mProgressBar.setVisibility(View.INVISIBLE);
         mParsedResults = new ArrayList<>();
-}
+    }
+
+    private void setCameraParameters() {
+        Camera mCamera = Camera.open();
+        Camera.Parameters params = mCamera.getParameters();
+        // Check what resolutions are supported by your camera
+        List<Camera.Size> sizes = params.getSupportedPictureSizes();
+        // Iterate through all available resolutions and choose one.
+        // The chosen resolution will be stored in mSize.
+        Camera.Size mSize = null;
+        for (Camera.Size size : sizes) {
+            if (size.height <= MAX_CAMERA_DIMENSION && size.width <= MAX_CAMERA_DIMENSION) {
+                mSize = size;
+                break;
+            }
+        }
+        if(mSize != null) {
+            params.setPictureSize(mSize.width, mSize.height);
+            mCamera.setParameters(params);
+        }
+        mCamera.release();
+    }
 
     //Add the individual ingredients into the list and update the list accordingly
     private void addIngredientsHelper(String in) {
@@ -406,10 +430,12 @@ public class IngredientsActivity extends AppCompatActivity {
 
         if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
-                Log.d("MyCameraApp", "RESULT_OK and fileuri=null?"+(fileUri==null));
                 if(data!= null){
-                    fileUri = data.getData();
-                    Log.d("MyCameraApp", "RESULT_OK and tried fileUri = data.getData();  fileuri=null?"+(fileUri==null));
+                    /*data.getData() returns null for API level 22*/
+                    if(data.getData() != null) {
+                        fileUri = data.getData();
+                        Log.d("MyCameraApp", "RESULT_OK and tried fileUri = data.getData();  fileuri=null?"+(fileUri==null));
+                    }
                 }
                 // Image captured and saved to fileUri specified in the Intent
                 new HttpTask().execute();
@@ -444,7 +470,7 @@ public class IngredientsActivity extends AppCompatActivity {
         @Override
         protected String doInBackground(Void... params) {
             String charset = "UTF-8";
-            String requestURL = "https://ocr.space/api/Parse/Image";
+            String requestURL = "https://api.ocr.space/Parse/Image";
 
             /*for testing purposes get uri from test picture.*/
             /*if(fileUri == null) {
