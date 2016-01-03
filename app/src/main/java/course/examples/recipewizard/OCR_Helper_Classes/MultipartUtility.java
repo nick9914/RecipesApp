@@ -1,10 +1,14 @@
 package course.examples.recipewizard.OCR_Helper_Classes;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Environment;
 import android.util.Log;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -32,6 +36,7 @@ public class MultipartUtility {
     private String charset;
     private OutputStream outputStream;
     private PrintWriter writer;
+    private static final int MAX_CAMERA_DIMENSION = 2600;
 
     /**
      * This constructor initializes a new HTTP POST request with content type
@@ -102,6 +107,8 @@ public class MultipartUtility {
         writer.append(LINE_FEED);
         writer.flush();
 
+        /*TODO resize the image here?*/
+
         FileInputStream inputStream = new FileInputStream(uploadFile);
         byte[] buffer = new byte[4096];
         int bytesRead = -1;
@@ -137,6 +144,60 @@ public class MultipartUtility {
 
         writer.append(LINE_FEED);
         writer.flush();
+    }
+
+    public void addFilePartAndResizeBitmap(String fieldName, File uploadFile)
+            throws IOException {
+        String fileName = uploadFile.getName();
+        writer.append("--" + boundary).append(LINE_FEED);
+        writer.append(
+                "Content-Disposition: form-data; name=\"" + fieldName
+                        + "\"; filename=\"" + fileName + "\"")
+                .append(LINE_FEED);
+        writer.append(
+                "Content-Type: "
+                        + URLConnection.guessContentTypeFromName(fileName))
+                .append(LINE_FEED);
+        writer.append("Content-Transfer-Encoding: binary").append(LINE_FEED);
+        writer.append(LINE_FEED);
+        writer.flush();
+
+        //Determine if we have to resize bitmap inorder to meet API's requirement of picture dimensions
+        Bitmap bm = null;
+        Bitmap originalBitmap = BitmapFactory.decodeFile(uploadFile.getAbsolutePath());
+        int height = originalBitmap.getHeight();
+        int width = originalBitmap.getWidth();
+
+        if (height > MAX_CAMERA_DIMENSION || width > MAX_CAMERA_DIMENSION) {
+            bm = resizeBitmap(originalBitmap, height, width);
+
+        } else {
+            bm = originalBitmap;
+        }
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        bm.compress(Bitmap.CompressFormat.JPEG, 0, bos);
+        byte[] bitmapData = bos.toByteArray();
+        ByteArrayInputStream inputStream = new ByteArrayInputStream(bitmapData);
+
+        /*FileInputStream inputStream = new FileInputStream(uploadFile);*/
+        byte[] buffer = new byte[4096];
+        int bytesRead = -1;
+        while ((bytesRead = inputStream.read(buffer)) != -1) {
+            outputStream.write(buffer, 0, bytesRead);
+        }
+        outputStream.flush();
+        inputStream.close();
+
+        writer.append(LINE_FEED);
+        writer.flush();
+    }
+
+    private Bitmap resizeBitmap(Bitmap originalBitmap, int height, int width) {
+        while (height > MAX_CAMERA_DIMENSION || width > MAX_CAMERA_DIMENSION) {
+            height = (int) (height * .75);
+            width = (int) (width * .75);
+        }
+        return Bitmap.createScaledBitmap(originalBitmap, width, height, false);
     }
 
     /**
@@ -181,7 +242,6 @@ public class MultipartUtility {
 
         return response;
     }
-
 
 
 }

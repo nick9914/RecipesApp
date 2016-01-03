@@ -32,7 +32,6 @@ import java.util.Arrays;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -53,6 +52,7 @@ public class IngredientsActivity extends AppCompatActivity {
     private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 100;
     private static final int FILTER_ACTIVITY_REQUEST_CODE = 837;
     private static final int MAX_CAMERA_DIMENSION = 26000;
+    private static final String TAG = "IngredientsActivity";
 
     private Uri fileUri;
     private String mParsedText;
@@ -225,27 +225,6 @@ public class IngredientsActivity extends AppCompatActivity {
         mProgressBar = (ProgressBar) findViewById(R.id.progressBarIngredients);
         mProgressBar.setVisibility(View.INVISIBLE);
         mParsedResults = new ArrayList<>();
-    }
-
-    private void setCameraParameters() {
-        Camera mCamera = Camera.open();
-        Camera.Parameters params = mCamera.getParameters();
-        // Check what resolutions are supported by your camera
-        List<Camera.Size> sizes = params.getSupportedPictureSizes();
-        // Iterate through all available resolutions and choose one.
-        // The chosen resolution will be stored in mSize.
-        Camera.Size mSize = null;
-        for (Camera.Size size : sizes) {
-            if (size.height <= MAX_CAMERA_DIMENSION && size.width <= MAX_CAMERA_DIMENSION) {
-                mSize = size;
-                break;
-            }
-        }
-        if(mSize != null) {
-            params.setPictureSize(mSize.width, mSize.height);
-            mCamera.setParameters(params);
-        }
-        mCamera.release();
     }
 
     //Add the individual ingredients into the list and update the list accordingly
@@ -425,12 +404,14 @@ public class IngredientsActivity extends AppCompatActivity {
         return mediaFile;
     }
 
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
         if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
                 if(data!= null){
+
                     /*data.getData() returns null for API level 22*/
                     if(data.getData() != null) {
                         fileUri = data.getData();
@@ -472,17 +453,12 @@ public class IngredientsActivity extends AppCompatActivity {
             String charset = "UTF-8";
             String requestURL = "https://api.ocr.space/Parse/Image";
 
-            /*for testing purposes get uri from test picture.*/
-            /*if(fileUri == null) {
-                fileUri = resIdToUri(getApplicationContext(), R.raw.recipts_grocery);
-            }*/
-
 
             try {
                 MultipartUtility multipart = new MultipartUtility(requestURL, charset);
                 multipart.addFormField("apikey", "helloworld");
                 multipart.addFormField("language", "eng");
-                multipart.addFilePart("file", new File(getRealPathFromURI(fileUri)));
+                multipart.addFilePartAndResizeBitmap("file", new File(getRealPathFromURI(fileUri)));
                 List<String> response = multipart.finish(); // response from server.
                 String temp = response.get(0);
                 Log.d("MyCameraApp", "JSON String "+ temp);
