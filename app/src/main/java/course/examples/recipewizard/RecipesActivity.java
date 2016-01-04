@@ -227,7 +227,6 @@ public class RecipesActivity extends Activity {
                 /*Construct GET URL*/
                 StringBuilder urlWithParameters = new StringBuilder(BASE_URL);
 
-                //TODO :
                 //comment in this line to enable the exclude file
                 //urlWithParameters.append(buildURLExcludes(mIngredientListProvided, mIngredientList));
                 urlWithParameters.append(buildURLIncludes(mIngredientListProvided, mIngredientListIncludes));
