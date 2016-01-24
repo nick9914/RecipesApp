@@ -161,10 +161,10 @@ public class RecipesActivity extends Activity {
     private class HttpGetRecipesTask extends AsyncTask<Void, Void, List<RecipeListObject>> {
         private static final String DEBUG_TAG = "HttpGetRecipes";
         /*UserName*/
-        private static final String APP_ID = "17a74454";
-        private static final String APP_KEY = "3ee9a972a2fd829f69fb1f077189185e";
+        private final String APP_ID = getString(R.string.yummly_app_id);
+        private final String APP_KEY = getString(R.string.yummly_app_key);
 
-        private static final String BASE_URL = "http://api.yummly.com/v1/api/recipes?_app_id=" +
+        private final String BASE_URL = "http://api.yummly.com/v1/api/recipes?_app_id=" +
                 APP_ID + "&_app_key=" + APP_KEY;
 
         private static final String User_Ingredients = "user_ingredient_file.JSON";
