@@ -89,8 +89,8 @@ public class SingleRecipeActivity extends Activity  {
 
     private class HttpGetSingleRecipeTask extends AsyncTask<String,Void,String>{
 
-        private static final String APP_ID = "17a74454";
-        private static final String APP_KEY = "3ee9a972a2fd829f69fb1f077189185e";
+        private final String APP_ID = getString(R.string.yummly_app_id);
+        private final String APP_KEY = getString(R.string.yummly_app_key);
         private static final String BASE_URL = "http://api.yummly.com/v1/api/recipe/";
         /*
                 +"French-Onion-Soup-The-Pioneer-Woman-Cooks-_-Ree-Drummond-41364" +"?_app_id="
