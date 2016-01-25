@@ -50,7 +50,8 @@ public class IngredientsActivity extends AppCompatActivity {
     /*For OCR functionality*/
     public static final int MEDIA_TYPE_IMAGE = 1;
     private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 100;
-    private static final int FILTER_ACTIVITY_REQUEST_CODE = 837;
+    /*TODO Filter Activity*/
+    /*private static final int FILTER_ACTIVITY_REQUEST_CODE = 837;*/
     private static final int MAX_CAMERA_DIMENSION = 26000;
     private static final String TAG = "IngredientsActivity";
 
@@ -199,9 +200,10 @@ public class IngredientsActivity extends AppCompatActivity {
 
                 //Package the string in an intent and return it
                 Intent i = new Intent(IngredientsActivity.this, RecipesActivity.class);
-                if(filterstring!=null) {
+                /*TODO: Filter Activity*/
+                /*if(filterstring!=null) {
                     i.putExtra("filter", filterstring);
-                }
+                }*/
                 i.putExtra("ingredientListIncludes", retStringIncludes);
                 i.putExtra("ingredientList", retString);
                 setResult(144, i);
@@ -280,10 +282,12 @@ public class IngredientsActivity extends AppCompatActivity {
             m_adapter.notifyDataSetChanged();
         } else if (id == R.id.clearInput) {
             userInput.setText("");
-        }else if (id == R.id.filters) {
+        }
+        /*Todo Filter Code*/
+        /*else if (id == R.id.filters) {
             Intent intent = new Intent(this, FilterActivity.class);
             this.startActivityForResult(intent, FILTER_ACTIVITY_REQUEST_CODE);
-        }
+        }*/
 
         return super.onOptionsItemSelected(item);
     }
@@ -428,14 +432,15 @@ public class IngredientsActivity extends AppCompatActivity {
             }
         }
 
-        if(requestCode==FILTER_ACTIVITY_REQUEST_CODE)
+        /*TODO Filter Activity*/
+        /*if(requestCode==FILTER_ACTIVITY_REQUEST_CODE)
         {
             if (resultCode == RESULT_OK) {
                 filterstring = data.getStringExtra("filter");
             }else if (resultCode == RESULT_CANCELED) {
                 // User cancelled the filter act
             }
-        }
+        }*/
 
 
     }
