@@ -37,11 +37,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class RecipesActivity extends Activity {
-    private static final Integer MAX_PAGINATION_RESULTS = 50;
-    private Integer paginationFrom;
     private GridView mGridview;
-    private Integer totalMatchCount;
-    private List<RecipeListObject> mPaginationListOfRecipes;
+    private List<RecipeListObject> mlistOfRecipesWithoutPics;
     private List<RecipeListObject> mlistOfRecipes;
     private RecipeListAdapter mAdapter;
     private ProgressBar mProgressBar;
@@ -50,14 +47,16 @@ public class RecipesActivity extends Activity {
     private boolean mIngredientListProvided;
     private String mIngredientListIncludes;
 
+    /*Pagination Variables*/
+    private static final Integer MAX_PAGINATION_RESULTS = 50;
+    private boolean loadMoreResults;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         /*Initialize global variables and listners*/
         super.onCreate(savedInstanceState);
         setContentView(R.layout.recipes_grid_view_layout);
-        paginationFrom = 0;
         mGridview = (GridView) findViewById(R.id.gridview);
-        mPaginationListOfRecipes = new ArrayList<>();
         mlistOfRecipes = new ArrayList<>();
         mAdapter = new RecipeListAdapter(this, mlistOfRecipes);
         mGridview.setAdapter(mAdapter);
@@ -88,6 +87,10 @@ public class RecipesActivity extends Activity {
             }
         });
 
+        loadMoreResults = true;
+
+
+
         /*Check Network Connection*/
         if (!checkNetworkConnection()) {
             Toast.makeText(RecipesActivity.this, "No internet Connection", Toast.LENGTH_SHORT).show();
@@ -114,13 +117,16 @@ public class RecipesActivity extends Activity {
 
     }
 
+
     public void customLoadMoreDataFromApi(int totalItemsCount) {
-        if(totalItemsCount < MAX_PAGINATION_RESULTS  && totalItemsCount < totalMatchCount) {
-            new HttpGetRecipesTask().execute();
-        }
         // This method probably sends out a network request and appends new data items to your adapter.
         // Use the offset value and add it as a parameter to your API request to retrieve paginated data.
         // Deserialize API response and then construct new objects to append to the adapter
+        if(totalItemsCount < MAX_PAGINATION_RESULTS && loadMoreResults) {
+            new HttpGetRecipesTask().execute();
+        } else {
+            showToast("No more Results");
+        }
     }
 
     public boolean checkNetworkConnection() {
@@ -161,15 +167,16 @@ public class RecipesActivity extends Activity {
     private class HttpGetRecipesTask extends AsyncTask<Void, Void, List<RecipeListObject>> {
         private static final String DEBUG_TAG = "HttpGetRecipes";
         /*UserName*/
-        private final String APP_ID = getString(R.string.yummly_app_id);
-        private final String APP_KEY = getString(R.string.yummly_app_key);
+        private final String API_KEY = getString(R.string.spoonacular_key);
 
-        private final String BASE_URL = "http://api.yummly.com/v1/api/recipes?_app_id=" +
-                APP_ID + "&_app_key=" + APP_KEY;
+
+        private final String API_ENDPOINT = "https://spoonacular-recipe-food-nutrition-v1.p.mashape.com/recipes/findByIngredients?";
 
         private static final String User_Ingredients = "user_ingredient_file.JSON";
 
-        private static final int MAX_RESULT = 10;
+        private static final int NUMBER_OF_RESULTS = 16;
+
+        private static final int RANKING = 2;
 
 
         @Override
@@ -178,101 +185,47 @@ public class RecipesActivity extends Activity {
             mProgressBar.setVisibility(View.VISIBLE);
         }
 
-        private String buildURLExcludes(boolean ingredientListProvided, String ingredientList) {
-            StringBuilder excludes = new StringBuilder();
+        @Override
+        protected List<RecipeListObject> doInBackground(Void... params) {
 
-            if(!ingredientListProvided) {
-                try {
+            StringBuilder getCall = new StringBuilder(API_ENDPOINT);
 
-                /*Get ingredients for user_ingredient_file.JSON*/
-                    JSONArray userIngredients = new JSONArray(loadUserIngredientsJSONFromAsset());
-                    for (int i = 0; i < userIngredients.length(); i++) {
-                        JSONObject ingredient = userIngredients.getJSONObject(i);
-                        String searchIngredientName = ingredient.getString("searchValue");
-                        excludes.append("&excludedIngredient[]=");
-                        //Encode value
-                        excludes.append(searchIngredientName.replaceAll(" ", "%20"));
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            } else {
-                for(String ingredient : ingredientList.split("\\r?\\n")) {
-                    excludes.append("&excludedIngredient[]=");
-                    excludes.append(ingredient.replaceAll(" ", "%20"));
-                }
+            /*Construct GET URL*/
 
+            getCall.append(appendIngredientsToGetRequest(mIngredientListProvided, mIngredientListIncludes));
+            getCall.append("&limitLicense=" + "false");
+            getCall.append("&number=" + paginationNumber());
+            getCall.append("&ranking=" + RANKING);
+
+            try {
+                return downloadUrl(getCall.toString());
+
+            } catch (IOException e) {
+                Log.i(DEBUG_TAG, "GET call Error");
+                e.printStackTrace();
+                return null;
             }
-            return excludes.toString();
         }
 
-        private String buildURLIncludes(boolean ingredientListProvided, String ingredientListIncludes) {
-            StringBuilder includes = new StringBuilder();
+        private int paginationNumber() {
+            return mlistOfRecipes.size() + NUMBER_OF_RESULTS;
+
+        }
+
+        private String appendIngredientsToGetRequest(boolean ingredientListProvided, String ingredientListIncludes) {
+            StringBuilder ingredients = new StringBuilder();
+            ingredients.append("ingredients=");
             if(!ingredientListProvided) {
+                /*TODO: Handel No Ingredients Provided*/
                 //No ingredients, thus no includes
                 return "";
             } else {
                 for(String ingredient : ingredientListIncludes.split("\\r?\\n")) {
-                    includes.append("&allowedIngredient[]=");
-                    includes.append(ingredient.replaceAll(" ", "%20"));
+                    ingredients.append(ingredient.replaceAll(" ", "%20"));
+                    ingredients.append("%2C");
                 }
-                return includes.toString();
+                return ingredients.toString();
             }
-        }
-
-        @Override
-        protected List<RecipeListObject> doInBackground(Void... params) {
-            /*TODO: Remove Try Catch block. Not need anymore*/
-            try {
-                /*Construct GET URL*/
-                StringBuilder urlWithParameters = new StringBuilder(BASE_URL);
-
-                //comment in this line to enable the exclude file
-                //urlWithParameters.append(buildURLExcludes(mIngredientListProvided, mIngredientList));
-                urlWithParameters.append(buildURLIncludes(mIngredientListProvided, mIngredientListIncludes));
-                urlWithParameters.append("&start=" + paginationFrom);
-                urlWithParameters.append("&maxResult=" + MAX_RESULT);
-                urlWithParameters.append("&requirePictures=true");
-
-
-                // added for filter activity
-                if(mFilterString!=null) {
-
-                    Log.i(DEBUG_TAG, "appending filter string to query: " + mFilterString);
-                    urlWithParameters.append(mFilterString);
-                }
-
-                //debug
-                //Log.i(DEBUG_TAG, "querystring : " + mFilterString);
-
-                return downloadUrl(urlWithParameters.toString());
-
-            } catch (IOException e) {
-                Log.i(DEBUG_TAG, "Could not load user_ingredient_file.JSON");
-                e.printStackTrace();
-                return null;
-            } catch (Exception e) {
-                Log.i(DEBUG_TAG, "Unable to retrieve web page. URL may be invalid.");
-                e.printStackTrace();
-                return null;
-
-            }
-        }
-
-        @Override
-        protected void onPostExecute(List<RecipeListObject> recipeListObjects) {
-            Log.i(DEBUG_TAG, "Finished Loading Recipe Objects");
-            if(!mPaginationListOfRecipes.isEmpty()) {
-                mPaginationListOfRecipes.clear();
-            }
-            //test if statement because of crash with nullpointer exception recipeListObjects
-            if(recipeListObjects!= null) {
-                mPaginationListOfRecipes.addAll(recipeListObjects);
-                paginationFrom += MAX_RESULT;
-                /*Get images for recipe objects*/
-                getRecipeImages();
-            }
-
         }
 
         private List<RecipeListObject> downloadUrl(String myurl) throws IOException {
@@ -282,6 +235,8 @@ public class RecipesActivity extends Activity {
             try {
                 URL url = new URL(myurl);
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setRequestProperty("X-Mashape-Key", API_KEY);
+                conn.setRequestProperty("Accept", "application/json");
                 conn.connect();
                 int response = conn.getResponseCode();
                 Log.d(DEBUG_TAG, "The response is: " + response);
@@ -303,18 +258,24 @@ public class RecipesActivity extends Activity {
         private List<RecipeListObject> fromJSONToRecipeListObjects(String contentAsString) {
             List<RecipeListObject> listOfRecipes = new ArrayList<>();
             try {
-                JSONObject jsonObject = new JSONObject(contentAsString);
-                if(totalMatchCount == null){
-                    totalMatchCount = jsonObject.getInt("totalMatchCount");
+                JSONArray matchesArray = new JSONArray(contentAsString);
+                /*Check if more results are found (pagination support)*/
+                if(mlistOfRecipes.size() == matchesArray.length()) {
+                    //Empty List
+                    loadMoreResults = false;
+                    return listOfRecipes;
                 }
-                JSONArray matchesArray = (JSONArray) jsonObject.get("matches");
-                for (int i = 0; i < matchesArray.length(); i++) {
+                for (int i = mlistOfRecipes.size() == 0 ? 0 : mlistOfRecipes.size() - 1; i < matchesArray.length(); i++) {
                     JSONObject JSONRecipeObject = matchesArray.getJSONObject(i);
                     RecipeListObject recipeListObj = new RecipeListObject();
+
                     recipeListObj.setRecipeId(JSONRecipeObject.getString("id"));
-                    recipeListObj.setRecipeLabel(JSONRecipeObject.getString("recipeName"));
-                    JSONObject imageUrlJsonObj = JSONRecipeObject.getJSONObject("imageUrlsBySize");
-                    recipeListObj.setPictureURL(imageUrlJsonObj.getString("90"));
+                    recipeListObj.setRecipeTitle(JSONRecipeObject.getString("title"));
+                    recipeListObj.setPictureURL(JSONRecipeObject.getString("image"));
+                    recipeListObj.setUsedIngredientCount(Integer.valueOf(JSONRecipeObject.getString("usedIngredientCount")));
+                    recipeListObj.setMissedIngredientCount(Integer.valueOf(JSONRecipeObject.getString("missedIngredientCount")));
+                    recipeListObj.setLikes(Integer.valueOf(JSONRecipeObject.getString("likes")));
+
                     listOfRecipes.add(recipeListObj);
                 }
             } catch (Exception e) {
@@ -348,6 +309,17 @@ public class RecipesActivity extends Activity {
             return data.toString();
         }
 
+        @Override
+        protected void onPostExecute(List<RecipeListObject> recipeListObjects) {
+            if(recipeListObjects.size() == 0) {
+                showToast("No more results");
+
+            }
+            mlistOfRecipesWithoutPics = recipeListObjects;
+            getRecipeImages();
+
+        }
+
         private String loadUserIngredientsJSONFromAsset() {
             String json = null;
             try {
@@ -373,7 +345,7 @@ public class RecipesActivity extends Activity {
 
         @Override
         protected Void doInBackground(Void... params) {
-            for(RecipeListObject recipeObj : mPaginationListOfRecipes) {
+            for(RecipeListObject recipeObj : mlistOfRecipesWithoutPics) {
                 recipeObj.setRecipePicture(LoadImageFromWebOperations(recipeObj.getPictureURL()));
             }
             return null;
@@ -381,7 +353,7 @@ public class RecipesActivity extends Activity {
 
         @Override
         protected void onPostExecute(Void aVoid) {
-            mlistOfRecipes.addAll(mPaginationListOfRecipes);
+            mlistOfRecipes.addAll(mlistOfRecipesWithoutPics);
             mAdapter.notifyDataSetChanged();
             mProgressBar.setVisibility(View.INVISIBLE);
         }
@@ -403,6 +375,10 @@ public class RecipesActivity extends Activity {
             }
         }
 
+    }
+
+    public void showToast(String toast) {
+        Toast.makeText(this.getApplicationContext(), toast, Toast.LENGTH_SHORT).show();
     }
 
 }
