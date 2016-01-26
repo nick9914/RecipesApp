@@ -64,6 +64,7 @@ public class RecipesActivity extends Activity {
         mIngredientListProvided = false;
         mIngredientList = null;
         mFilterString = null;
+        loadMoreResults = true;
 
         mGridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -76,6 +77,8 @@ public class RecipesActivity extends Activity {
             }
         });
 
+
+
         mGridview.setOnScrollListener(new EndlessScrollListener() {
             @Override
             public boolean onLoadMore(int page, int totalItemsCount) {
@@ -87,7 +90,16 @@ public class RecipesActivity extends Activity {
             }
         });
 
-        loadMoreResults = true;
+        mGridview.setLongClickable(true);
+        mGridview.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                Log.v("long clicked","pos: " + position);
+                return true;
+            }
+        });
+
+
 
 
 
