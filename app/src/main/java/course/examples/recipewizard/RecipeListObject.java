@@ -31,6 +31,7 @@ public class RecipeListObject {
         this.id = id;
     }
 
+
     public Bitmap getRecipePicture() {
         return recipePicture;
     }
@@ -81,5 +82,17 @@ public class RecipeListObject {
 
     public void setLikes(Integer likes) {
         this.likes = likes;
+    }
+
+    public Integer getUsedIngredientCount() {
+        return usedIngredientCount;
+    }
+
+    public Integer getMissedIngredientCount() {
+        return missedIngredientCount;
+    }
+
+    public Integer getLikes() {
+        return likes;
     }
 }

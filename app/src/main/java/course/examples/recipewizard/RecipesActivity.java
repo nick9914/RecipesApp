@@ -13,18 +13,25 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.ListView;
+import android.widget.PopupWindow;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -46,6 +53,7 @@ public class RecipesActivity extends Activity {
     private String mFilterString;
     private boolean mIngredientListProvided;
     private String mIngredientListIncludes;
+
 
     /*Pagination Variables*/
     private static final Integer MAX_PAGINATION_RESULTS = 50;
@@ -94,14 +102,37 @@ public class RecipesActivity extends Activity {
         mGridview.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                Log.v("long clicked","pos: " + position);
+                Log.v("long clicked", "pos: " + position);
+                PopupWindow popup = new PopupWindow(getApplicationContext());
+                View layout = getLayoutInflater().inflate(R.layout.popup_content, null);
+
+                TextView usedIngredients = (TextView) layout.findViewById(R.id.usedIngredientCount_popup);
+                usedIngredients.setText("Used Ingredients: " + mlistOfRecipes.get(position).getUsedIngredientCount());
+
+                TextView missedIngredients = (TextView) layout.findViewById(R.id.missedIngredientCount_popup);
+                missedIngredients.setText("Missed Ingredients: " + mlistOfRecipes.get(position).getMissedIngredientCount());
+
+                TextView likes = (TextView) layout.findViewById(R.id.likes_popup);
+                likes.setText("Likes: " + mlistOfRecipes.get(position).getLikes());
+
+                popup.setContentView(layout);
+
+                // Set content width and height
+                popup.setHeight(WindowManager.LayoutParams.WRAP_CONTENT);
+                popup.setWidth(WindowManager.LayoutParams.WRAP_CONTENT);
+
+                // Closes the popup window when touch outside of it - when looses focus
+                popup.setOutsideTouchable(true);
+                popup.setFocusable(true);
+                // Show anchored to button
+                popup.setBackgroundDrawable(new BitmapDrawable());
+                popup.showAsDropDown(view);
+
+
+
                 return true;
             }
         });
-
-
-
-
 
         /*Check Network Connection*/
         if (!checkNetworkConnection()) {
