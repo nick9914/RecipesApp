@@ -1,4 +1,4 @@
-# RecipesApp Iteration Two
+# RecipesApp Iteration 2
 
 Re-doing UI, changed Recipes API, and adding more functionality.
 
