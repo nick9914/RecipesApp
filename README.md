@@ -1,4 +1,9 @@
-# RecipesApp
+# RecipesApp Iteration 2
+
+Re-doing UI, changed Recipes API, and adding more functionality.
+
+# RecipesApp Iteration 1
+
 This is an Android application that suggests recipes that can be made based on the ingredients in the user’s fridge or pantry.
 This app also supports picture parsing, for importing ingredients from grocery receipts or grocery lists.
 This App is currently in its first iteration. 
