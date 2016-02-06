@@ -1,40 +1,112 @@
 <?xml version="1.0" encoding="utf-8"?>
+
+
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:background="@drawable/popup_bg">
+    android:layout_height="wrap_content">
 
-    <!--<TextView
-        android:id="@+id/tvCaption"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:text="This is a popup!"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textColor="#ffffff" />-->
+    <!--<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/bac_dim_layoutTEST"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#96000000"
+        android:visibility="visible">
+    </RelativeLayout>-->
 
-    <TextView android:id="@+id/usedIngredientCount_popup"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Used Ingredients: "
-        android:textColor="#FFF"
-        android:textSize="@dimen/abc_text_size_medium_material" />
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:orientation="vertical" android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
 
-    <TextView android:id="@+id/missedIngredientCount_popup"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Missed Ingredients: "
-        android:layout_below="@id/usedIngredientCount_popup"
-        android:textColor="#FFF"
-        android:textSize="@dimen/abc_text_size_medium_material" />
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
 
-    <TextView android:id="@+id/likes_popup"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Likes: "
-        android:layout_below="@id/missedIngredientCount_popup"
-        android:textColor="#FFF"
-        android:textSize="@dimen/abc_text_size_medium_material" />
+            <ImageView
+                android:id="@+id/recipePicturePopup"
+                android:layout_width="180dp"
+                android:layout_height="180dp"
+                android:adjustViewBounds="true" />
+
+            <View
+                android:layout_width="180dp"
+                android:layout_height="180dp"
+                android:background="@drawable/gradient"
+                android:layout_alignBottom="@id/recipePicturePopup"/>
+
+            <TextView
+                android:id="@+id/recipe_title_popup"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/abc_text_size_menu_material"
+                android:text="Example Recipe Title "
+                android:textColor="#FFF"
+                android:layout_alignBottom="@+id/recipePicturePopup"
+                android:textStyle="normal"
+                android:layout_alignParentStart="true"
+                android:singleLine="false"
+                android:layout_alignParentEnd="false"
+                android:width="180dp" />
+
+
+
+
+        </RelativeLayout>
+
+
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingTop="@dimen/abc_action_bar_subtitle_bottom_margin_material">
+
+            <ImageView
+                android:id="@+id/ingredients_icon_24_white_id"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ingredients_icon_24_white"
+                android:paddingLeft="4dp"
+                android:paddingRight="@dimen/abc_action_bar_overflow_padding_end_material"
+                android:layout_gravity="center_vertical" />
+
+            <TextView
+                android:id="@+id/usedIngredientCount_popup"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="5"
+                android:textColor="#FFF"
+                android:textSize="@dimen/abc_text_size_menu_material"
+                android:layout_gravity="center_vertical"
+                android:paddingRight="@dimen/abc_action_bar_subtitle_bottom_margin_material" />
+
+            <ImageView
+                android:id="@+id/check_icon_24_green_id"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/checked_icon_24_green"
+                android:layout_gravity="center_vertical"
+                android:paddingRight="@dimen/abc_action_bar_overflow_padding_end_material" />
+
+
+            <TextView
+                android:id="@+id/missedIngredientCount_popup"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="2"
+                android:textColor="#FFF"
+                android:textSize="@dimen/abc_text_size_menu_material"
+                android:layout_gravity="center_vertical"
+                android:paddingRight="@dimen/abc_action_bar_subtitle_bottom_margin_material" />
+
+            <ImageView
+                android:id="@+id/missing_icon_24_orange_id"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/cancel_icon_24_orange"
+                android:layout_gravity="center_vertical" />
+
+        </LinearLayout>
+
+    </LinearLayout>
 
 </RelativeLayout>

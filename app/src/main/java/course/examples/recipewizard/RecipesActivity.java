@@ -13,6 +13,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -21,10 +22,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.AdapterView;
+import android.widget.FrameLayout;
 import android.widget.GridView;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -42,6 +46,8 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+
+import course.examples.recipewizard.BlurHelperClass.BlurBuilder;
 
 public class RecipesActivity extends Activity {
     private GridView mGridview;
@@ -103,17 +109,42 @@ public class RecipesActivity extends Activity {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
                 Log.v("long clicked", "pos: " + position);
-                PopupWindow popup = new PopupWindow(getApplicationContext());
+                final PopupWindow popup = new PopupWindow(getApplicationContext());
+
+                final RelativeLayout back_dim_layout = (RelativeLayout) findViewById(R.id.bac_dim_layout);
+                back_dim_layout.setVisibility(View.VISIBLE);
+
+                final RelativeLayout blurredBackground = (RelativeLayout) findViewById(R.id.blurBackground);
+                blurredBackground.setBackground(createBlurredBackground());
+                blurredBackground.setVisibility(View.VISIBLE);
+
+                //Dismiss Listener
+                popup.setOnDismissListener(new PopupWindow.OnDismissListener() {
+                    @Override
+                    public void onDismiss() {
+                        popup.dismiss();
+                        back_dim_layout.setVisibility(View.GONE);
+                        blurredBackground.setVisibility(View.GONE);
+                    }
+                });
+
                 View layout = getLayoutInflater().inflate(R.layout.popup_content, null);
 
                 TextView usedIngredients = (TextView) layout.findViewById(R.id.usedIngredientCount_popup);
-                usedIngredients.setText("Used Ingredients: " + mlistOfRecipes.get(position).getUsedIngredientCount());
+                usedIngredients.setText("" + mlistOfRecipes.get(position).getUsedIngredientCount());
 
                 TextView missedIngredients = (TextView) layout.findViewById(R.id.missedIngredientCount_popup);
-                missedIngredients.setText("Missed Ingredients: " + mlistOfRecipes.get(position).getMissedIngredientCount());
+                missedIngredients.setText("" + mlistOfRecipes.get(position).getMissedIngredientCount());
 
-                TextView likes = (TextView) layout.findViewById(R.id.likes_popup);
-                likes.setText("Likes: " + mlistOfRecipes.get(position).getLikes());
+
+                /*TextView likes = (TextView) layout.findViewById(R.id.likes_popup);
+                likes.setText("Likes: " + mlistOfRecipes.get(position).getLikes())*/;
+
+                ImageView recipePicture = (ImageView) layout.findViewById(R.id.recipePicturePopup);
+                recipePicture.setImageBitmap(mlistOfRecipes.get(position).getRecipePicture());
+
+                TextView recipeTitle = (TextView) layout.findViewById(R.id.recipe_title_popup);
+                recipeTitle.setText(mlistOfRecipes.get(position).getRecipeLabel());
 
                 popup.setContentView(layout);
 
@@ -126,9 +157,8 @@ public class RecipesActivity extends Activity {
                 popup.setFocusable(true);
                 // Show anchored to button
                 popup.setBackgroundDrawable(new BitmapDrawable());
-                popup.showAsDropDown(view);
 
-
+                popup.showAsDropDown(view, 0, -view.getMeasuredWidth());
 
                 return true;
             }
@@ -158,6 +188,17 @@ public class RecipesActivity extends Activity {
         new HttpGetRecipesTask().execute();
 
 
+    }
+
+    public Drawable createBlurredBackground() {
+        RelativeLayout view = (RelativeLayout)findViewById(R.id.recipesActivityLayout);
+        view.setDrawingCacheEnabled(true);
+        view.buildDrawingCache();
+        Bitmap bm = view.getDrawingCache();
+
+        Bitmap blurredImage = BlurBuilder.blur(this.getApplicationContext(), bm);
+
+        return new BitmapDrawable(blurredImage);
     }
 
 
